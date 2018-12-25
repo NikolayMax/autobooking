@@ -8,13 +8,15 @@ let dbconfig = require("../db.config.json");
 dbconfigmigration.dev.password = dbconfig.password;
 dbconfigmigration.dev.user = dbconfig.user;
 dbconfigmigration.dev.host = dbconfig.host;
-var resolve;
+
+
 db.query('select * from `auto_admin`.`organizations`')
     .then(function(results){
 
         var promise = new Promise(function(res){
             res();
         });
+
         async.forEachOf(results, (value, key, callback)=>{
             promise = promise.then(()=>{
                 console.log(`\nStart migrations organization №: ${value['organization_id']}`);
@@ -29,6 +31,9 @@ db.query('select * from `auto_admin`.`organizations`')
                         })
             })
         });
+        promise.then(function(){
+            require('./admin/app.js')
+        })
     })
     .catch((err)=>{
         if(!db.closed)

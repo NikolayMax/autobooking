@@ -1,0 +1,7 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "database": "auto_admin"
+  },
+  "prefixdb": "auto"
+}

@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+const mysqlUtilities = require('mysql-utilities');
 var config = require("./db.config");
 
 class Database {
@@ -19,6 +20,10 @@ class Database {
     connect(){
         console.log('Connect mysql!!\n');
         this.connection = mysql.createConnection(config);
+
+        mysqlUtilities.upgrade(this.connection);
+
+        mysqlUtilities.introspection(this.connection);
     }
     query( sql, args ) {
         return new Promise((resolve, reject ) => {

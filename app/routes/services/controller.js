@@ -6,7 +6,11 @@ class ServiceController{
         if(!req.query.orgid)
             return next('Не найдена организация '+req.query.orgid);
 
-        this.db.query('SELECT * FROM auto_admin.organizations WHERE organization_id = ?', [req.query.orgid])
+        if(/[^0-9]/g.test(req.query.orgid)){
+            return next('Не найдена организация '+req.query.orgid);
+        }
+
+       this.db.query('SELECT * FROM auto_admin.organizations WHERE organization_id = ?', [req.query.orgid])
             .then((results)=>{
                 if(results.length)
                     return this.db.query('SELECT * FROM auto_'+req.query.orgid+'.services_car');

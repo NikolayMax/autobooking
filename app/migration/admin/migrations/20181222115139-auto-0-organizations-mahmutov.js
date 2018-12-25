@@ -17,7 +17,7 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db, callback) {
     db.createTable('organizations', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
-        'id_organization': { type: 'int'},
+        'organization_id': { type: 'int'},
         name: 'string'
     }, callback)
 };
