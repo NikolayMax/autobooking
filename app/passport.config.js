@@ -17,10 +17,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new LocalStrategy({usernameField:'phone'},function(phone, password, done) {
         db.query('SELECT * from auto_admin.users WHERE phone = ? && password = ?', [phone,password])
             .then(function(user){
-                if(user.length == 1)
-                    user = user[0];
-                else
-                    user = false;
+                user = user[0];
                 done(null, user);
             })
             .catch(function(){

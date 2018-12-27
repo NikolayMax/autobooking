@@ -24,7 +24,7 @@ export default {
 
                 commit(AUTH_REQUEST);
 
-                Vue.http.post(HOST+'/user/login', user, {method:'POST'})
+                Vue.http.post(HOST+'/user/login', JSON.stringify(user))
                     .then(resp => {
                         const token = resp.data.token;
                         localStorage.setItem('user-token', token);

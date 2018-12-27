@@ -13,7 +13,7 @@ class UserController{
                                 ? next(err)
                                 : res.redirect('/user');
                         })
-                        : res.redirect('/login');})(req, res, next);
+                        : res.json({1:user});})(req, res, next);
     }
     register(req, res, next){
         let {phone, password} = req.body;

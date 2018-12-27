@@ -16,8 +16,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
     res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Allow-Methods', 'POST,GET');
+    res.set('Access-Control-Allow-Headers', '*');
     next();
 });
 app.use(require('./routes'));
