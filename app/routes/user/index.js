@@ -8,6 +8,15 @@ module.exports = ()=>{
     let controller = new UserController(db);
 
     router.post('/login', controller.login.bind(controller));
+    router.post('/register', controller.register.bind(controller));
+    router.get('/logout', controller.logout.bind(controller));
+
+    router.get('/', function (req, res, next){
+        if(req.isAuthenticated())
+            next();
+        else
+            res.redirect('/login');
+    }, controller.list.bind(controller));
 
     return router;
 };

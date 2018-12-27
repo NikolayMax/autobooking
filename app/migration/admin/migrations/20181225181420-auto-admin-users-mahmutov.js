@@ -21,7 +21,8 @@ exports.up = function(db, callback) {
         firstname: 'string',
         patronymic: 'string',
         email: 'string',
-        password: 'string'
+        password: 'string',
+        phone: 'string',
     }, callback)
 };
 
