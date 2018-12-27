@@ -1,3 +1,110 @@
 <template>
-    <div>Register</div>
+    <v-container>
+        <v-layout>
+            <v-flex>
+                <v-card>
+                    <v-card-title class="display-1 font-weight-thin">Регистрация автосервиса</v-card-title>
+
+                    <v-card-text>
+                        <v-layout row>
+                            <v-text-field
+                                    label="Фамилия"
+                                    v-model="lastname"
+                            ></v-text-field>
+                        </v-layout>
+                        <v-layout row>
+                            <v-text-field
+                                    label="Имя"
+                                    v-model="firstname"
+                            ></v-text-field>
+                        </v-layout>
+                        <v-layout row>
+                            <v-text-field
+                                    label="Отчество"
+                                    v-model="patronymic"
+                            ></v-text-field>
+                        </v-layout>
+                        <v-layout row>
+                            <v-text-field
+                                    label="Телефон"
+                                    mask="7(###) ### - ####"
+                                    v-model="phone"
+                            ></v-text-field>
+                        </v-layout>
+                        <v-layout row>
+                            <v-text-field
+                                    label="Название автосервиса"
+                                    v-model="nameAutoservice"
+                            ></v-text-field>
+                        </v-layout>
+                        <v-layout row>
+                            <v-text-field
+                                    label="Пароль"
+                                    v-model="password"
+                                    :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                                    :rules="[rules.min]"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    name="input-10-1"
+                                    counter
+                                    @click:append="showPassword = !showPassword"
+                            ></v-text-field>
+                        </v-layout>
+                        <v-layout row>
+                            <v-text-field
+                                    label="Повторите пароль"
+                                    v-model="comfirmPassword"
+                                    :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                                    :rules="[rules.min, rules.confirmPassword]"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    name="input-10-1"
+                                    counter
+                                    @click:append="showPassword = !showPassword"
+                            ></v-text-field>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex>
+                                <v-btn v-on:click="register">OK</v-btn>
+                            </v-flex>
+                        </v-layout>
+                    </v-card-text>
+                </v-card>
+            </v-flex>
+        </v-layout>
+    </v-container>
 </template>
+
+<script>
+    import {USER_REGISTER} from '../store/actions/user'
+
+    export default{
+        data:()=>{
+            let data = {
+                lastname:'',
+                firstname:'',
+                patronymic:'',
+                nameAutoservice:'',
+                password:'',
+                comfirmPassword:'',
+                phone:'',
+                showPassword: false,
+                rules: {
+                    confirmPassword: v => data.comfirmPassword === data.password || 'Пароли не совподают',
+                    min: v => v.length >= 6 || 'Минимально 6 символов',
+                },
+            }
+            return data;
+        },
+        methods:{
+            register: function(){
+                const { lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice } = this;
+
+                console.log(USER_REGISTER);
+                this.$store.dispatch(USER_REGISTER, { lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice })
+                    .then(()=>{
+                        this.$router.push('/')
+                    })
+            }
+        }
+    }
+
+</script>

@@ -10,7 +10,7 @@
           </v-content>
           <v-footer app></v-footer>
       </div>
-      <router-view  v-hide="isAuth"></router-view>
+      <router-view  v-show="!isAuth"></router-view>
   </v-app>
 </template>
 

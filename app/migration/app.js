@@ -9,8 +9,9 @@ dbconfigmigration.dev.password = dbconfig.password;
 dbconfigmigration.dev.user = dbconfig.user;
 dbconfigmigration.dev.host = dbconfig.host;
 
-
-db.query('select * from `auto_admin`.`organizations`')
+let promise = require('./admin/app.js');
+promise
+    .then(()=>{db.query('select * from `auto_admin`.`organizations`')})
     .then(function(results){
 
         var promise = new Promise(function(res){
@@ -31,9 +32,6 @@ db.query('select * from `auto_admin`.`organizations`')
                         })
             })
         });
-        promise.then(function(){
-            require('./admin/app.js')
-        })
     })
     .catch((err)=>{
         if(!db.closed)

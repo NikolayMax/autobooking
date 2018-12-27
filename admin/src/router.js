@@ -20,8 +20,8 @@ const routes = [
             }
         }
     },
-    {path:'/login', component:Login},
-    {path:'/register', component:Register},
+    {path:'/login', component:Login, meta:{title:'Авторизация'}},
+    {path:'/register', component:Register, meta:{title:'Регистрация'}},
 ];
 
 export default new VueRouter({
