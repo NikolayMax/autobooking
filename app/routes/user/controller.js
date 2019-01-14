@@ -1,4 +1,7 @@
 const passport = require('passport');
+const bcrypt = require('bcrypt');
+const BCRYPT_SALT_ROUNDS = 'Sals123';
+
 class UserController{
     constructor(db){
         this.db = db;
@@ -19,7 +22,7 @@ class UserController{
         let {lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice} = req.body;
         phone = phone.replace(/[^0-9]/g,'');
 
-        this.db.query('SELECT * FROM auto_admin.users WHERE phone = ? AND password = ?', [phone, password])
+        this.db.query('SELECT * FROM auto_admin.users WHERE phone = ? AND password = ?', [phone, bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS) ])
             .then((users)=>{
                 let user = users[0];
                 return new Promise((res, rej)=>{
@@ -36,12 +39,13 @@ class UserController{
                     }
                 });
             })
-            .then((user)=>new Promise((res, rej)=>{
+            .then((user)=>new Promise((res, rej)=>bcrypt.hash(password, BCRYPT_SALT_ROUNDS)))
+            .then((hashPassword)=>{
                 this.db.query('INSERT INTO auto_admin.users(lastname, firstname, patronymic, password, phone, organization_id) VALUES(?, ?, ?, ?, ?, ?)',
-                    [lastname, firstname, patronymic, password, phone, user['organization_id']])
+                    [lastname, firstname, patronymic, hashPassword, phone, user['organization_id']])
                     .then((users)=>res(users))
                     .catch((err)=>rej(err))
-            }))
+            })
             .then(()=> this.db.query('SELECT * FROM auto_admin.users WHERE password = ? AND phone = ?', [password, phone]))
             .then(function(users){
                 let user = users[0];
