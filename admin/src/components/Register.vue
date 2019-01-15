@@ -4,7 +4,12 @@
             <v-flex>
                 <v-card>
                     <v-card-title class="display-1 font-weight-thin">Регистрация автосервиса</v-card-title>
-
+                    <v-alert
+                            v-show="error"
+                            :value="true"
+                            type="error">
+                        {{error}}
+                    </v-alert>
                     <v-card-text>
                         <v-layout row>
                             <v-text-field
@@ -86,6 +91,7 @@
                 password:'',
                 comfirmPassword:'',
                 phone:'',
+                error:null,
                 showPassword: false,
                 rules: {
                     confirmPassword: v => data.comfirmPassword === data.password || 'Пароли не совподают',
@@ -103,6 +109,7 @@
                     .then(()=>{
                         this.$router.push('/')
                     })
+                    .catch(err=>this.error=err.text)
             }
         }
     }

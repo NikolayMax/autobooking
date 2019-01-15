@@ -24,7 +24,7 @@ export default {
                     .catch(err => {
                         commit(USER_ERROR, err);
                         localStorage.removeItem('user-token');
-                        reject(err)
+                        reject(err.body)
                     })
             })
         }

@@ -1,6 +1,6 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-const BCRYPT_SALT_ROUNDS = 'Sals123';
+const BCRYPT_SALT_ROUNDS = 12;
 
 class UserController{
     constructor(db){
@@ -21,13 +21,18 @@ class UserController{
     register(req, res, next){
         let {lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice} = req.body;
         phone = phone.replace(/[^0-9]/g,'');
+        let user, hashPassword;
 
-        this.db.query('SELECT * FROM auto_admin.users WHERE phone = ? AND password = ?', [phone, bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS) ])
+        bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
+            .then( hPassword => {
+                hashPassword = hPassword;
+                return this.db.query('SELECT * FROM auto_admin.users WHERE phone = ?', [phone])
+            })
             .then((users)=>{
-                let user = users[0];
+                user = users[0];
                 return new Promise((res, rej)=>{
                     if(user){
-                        rej('Такой пользователь существует если это вы авторизуйтесь')
+                        rej('Такой пользователь существует если это вы, авторизуйтесь!')
                     }else{
                         user = {};
                         this.db.query('INSERT INTO auto_admin.organizations(name) VALUES(?)', [nameAutoservice])
@@ -39,14 +44,11 @@ class UserController{
                     }
                 });
             })
-            .then((user)=>new Promise((res, rej)=>bcrypt.hash(password, BCRYPT_SALT_ROUNDS)))
-            .then((hashPassword)=>{
+            .then(()=>{
                 this.db.query('INSERT INTO auto_admin.users(lastname, firstname, patronymic, password, phone, organization_id) VALUES(?, ?, ?, ?, ?, ?)',
                     [lastname, firstname, patronymic, hashPassword, phone, user['organization_id']])
-                    .then((users)=>res(users))
-                    .catch((err)=>rej(err))
             })
-            .then(()=> this.db.query('SELECT * FROM auto_admin.users WHERE password = ? AND phone = ?', [password, phone]))
+            .then(()=> this.db.query('SELECT * FROM auto_admin.users WHERE password = ? AND phone = ?', [hashPassword, phone]))
             .then(function(users){
                 let user = users[0];
                 req.logIn(user, function(err) {
@@ -56,7 +58,6 @@ class UserController{
                 })
             })
             .catch((err)=>{
-                console.log(53, err)
                 return next(err)
             });
     }
