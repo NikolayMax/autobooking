@@ -33,9 +33,9 @@ export default {
 
                     })
                     .catch(err => {
-                        commit(AUTH_ERROR, err);
+                        commit(AUTH_ERROR, err.body);
                         localStorage.removeItem('user-token'); // if the request fails, remove any possible user token if possible
-                        reject(err)
+                        reject(err.body)
                     })
             })
         }

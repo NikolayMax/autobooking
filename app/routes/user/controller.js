@@ -1,6 +1,6 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-const BCRYPT_SALT_ROUNDS = 12;
+const BCRYPT_SALT_ROUNDS = 10;
 
 class UserController{
     constructor(db){
@@ -8,15 +8,19 @@ class UserController{
     }
     login(req, res, next){
         passport.authenticate('local', function(err, user, info) {
-            return err
-                    ? next(err)
-                    : user
-                        ? req.logIn(user, function(err) {
-                            return err
-                                ? next(err)
-                                : res.redirect('/user');
-                        })
-                        : res.json({1:user});})(req, res, next);
+            console.log(11, err, user, info)
+            if(err)
+                return next(err);
+            else if(user){
+                return req.logIn(user, function(err) {
+                    return err
+                        ? next(err)
+                        : res.json(user);
+                })
+            }else{
+                return next('Не известная ошибка')
+            }
+        })(req, res, next);
     }
     register(req, res, next){
         let {lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice} = req.body;

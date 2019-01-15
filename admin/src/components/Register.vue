@@ -2,8 +2,18 @@
     <v-container>
         <v-layout>
             <v-flex>
-                <v-card>
-                    <v-card-title class="display-1 font-weight-thin">Регистрация автосервиса</v-card-title>
+                <v-card style="position: relative;">
+                    <v-btn
+                            absolute
+                            dark
+                            fab
+                            left
+                            style="top:10px;"
+                            @click="login"
+                            color="pink">
+                        <v-icon>arrow_back</v-icon>
+                    </v-btn>
+                    <v-card-title class="display-1 font-weight-thin pl-5 pr-5" style="text-align: center;display: block;">Регистрация автосервиса</v-card-title>
                     <v-alert
                             v-show="error"
                             :value="true"
@@ -101,15 +111,23 @@
             return data;
         },
         methods:{
+            login: function(){
+              this.$router.push('/login')
+            },
             register: function(){
                 const { lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice } = this;
 
                 console.log(USER_REGISTER);
                 this.$store.dispatch(USER_REGISTER, { lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice })
                     .then(()=>{
-                        this.$router.push('/')
+                        this.$router.push('/login')
                     })
-                    .catch(err=>this.error=err.text)
+                    .catch(err=>{
+                        if(err){
+                            this.error=err.text;
+                            setTimeout(()=>{this.error=null}, 5000)
+                        }
+                    })
             }
         }
     }

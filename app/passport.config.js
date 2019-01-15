@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const db = require('./db');
@@ -15,13 +16,26 @@ passport.deserializeUser(function(id, done) {
         })
 });
 passport.use(new LocalStrategy({usernameField:'phone'},function(phone, password, done) {
-        db.query('SELECT * from auto_admin.users WHERE phone = ? && password = ?', [phone,password])
-            .then(function(user){
-                user = user[0];
-                done(null, user);
+        phone = phone.replace(/[^0-9]/g,'');
+        let user;
+
+        db.query('SELECT * from auto_admin.users WHERE phone = ?', [phone])
+            .then(users => {
+                user = users[0];
+                if(!user){
+                    done('Пользователя не существуте', false);
+                }
+                return bcrypt.compare(password, user.password);
+            })
+            .then((res)=>{
+                if(res) {
+                    done(null, user);
+                } else {
+                    done('Не верный пароль', false);
+                }
             })
             .catch(function(){
-                done(null, false);
+                done('Не известная ошибка', false);
             });
     }
 ));

@@ -3,8 +3,13 @@
            <v-layout>
                <v-flex sm4 offset-sm4>
                     <v-card>
-                        <v-card-title>Авторизация</v-card-title>
-
+                        <v-card-title class="display-1 font-weight-thin">Авторизация</v-card-title>
+                        <v-alert
+                                v-show="error"
+                                :value="true"
+                                type="warning">
+                            {{error}}
+                        </v-alert>
                         <v-card-text>
                             <v-layout row>
                                 <v-text-field
@@ -29,6 +34,11 @@
                             <v-layout row>
                                 <v-flex>
                                     <v-btn @click="login">OK</v-btn>
+                                    <v-btn @click="register" color="blue-grey"
+                                           class="white--text">
+                                        <v-icon dark left>edit</v-icon>
+                                        Регистрация
+                                    </v-btn>
                                 </v-flex>
                             </v-layout>
                         </v-card-text>
@@ -46,6 +56,7 @@
         data:()=>({
             phone:'',
             password:'',
+            error:null,
             show1: false,
             show2: true,
             show3: false,
@@ -60,12 +71,21 @@
             },
         }),
         methods:{
+            register: function(){
+              this.$router.push('/register')
+            },
             login: function () {
                 const { phone, password } = this;
 
                 this.$store.dispatch(AUTH_REQUEST, { phone, password })
                     .then(()=>{
                         this.$router.push('/')
+                    })
+                    .catch(err=>{
+                        if(err){
+                            this.error = err.text;
+                            setTimeout(()=>{this.error=null}, 5000)
+                        }
                     })
             }
         }
