@@ -11,6 +11,8 @@ module.exports = ()=>{
     router.post('/register', controller.register.bind(controller));
     router.get('/logout', controller.logout.bind(controller));
 
+    router.get('/isAuth', controller.isAuth.bind(controller));
+
     router.get('/', function (req, res, next){
         if(req.isAuthenticated())
             next();

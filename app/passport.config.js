@@ -15,9 +15,14 @@ passport.deserializeUser(function(id, done) {
             done(null, user?user:false);
         })
 });
-passport.use(new LocalStrategy({usernameField:'phone'},function(phone, password, done) {
+passport.use(new LocalStrategy({usernameField: 'phone'},function(phone, password, done){
         phone = phone.replace(/[^0-9]/g,'');
         let user;
+        if(!phone)
+            return done('Телефон не ввиден или не верный формат');
+
+        if(!password)
+            return done('Пароль не ввиден');
 
         db.query('SELECT * from auto_admin.users WHERE phone = ?', [phone])
             .then(users => {
@@ -39,3 +44,9 @@ passport.use(new LocalStrategy({usernameField:'phone'},function(phone, password,
             });
     }
 ));
+passport.authenticationMiddleware = (req, res, next)=>{
+    if (req.isAuthenticated()) {
+        return next()
+    }
+    res.redirect('/login');
+};

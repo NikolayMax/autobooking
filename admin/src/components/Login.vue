@@ -53,6 +53,11 @@
     import {AUTH_REQUEST} from '../store/actions/auth'
 
     export default{
+        mounted() {
+            console.log(123);
+            this.$http.get('http://localhost:3000/user/isAuth')
+                .then((res)=>console.log(res));
+        },
         data:()=>({
             phone:'',
             password:'',
@@ -78,7 +83,7 @@
                 const { phone, password } = this;
 
                 this.$store.dispatch(AUTH_REQUEST, { phone, password })
-                    .then(()=>{
+                    .then((err)=>{
                         this.$router.push('/')
                     })
                     .catch(err=>{

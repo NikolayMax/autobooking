@@ -6,16 +6,19 @@ class UserController{
     constructor(db){
         this.db = db;
     }
+    isAuth(req, res, next){
+        res.json(req.isAuthenticated());
+    }
     login(req, res, next){
         passport.authenticate('local', function(err, user, info) {
-            console.log(11, err, user, info)
+            console.log(err, user, info)
             if(err)
                 return next(err);
             else if(user){
-                return req.logIn(user, function(err) {
+                return req.logIn(user, function(err){
                     return err
                         ? next(err)
-                        : res.json(user);
+                        : res.json(req.sessionID);
                 })
             }else{
                 return next('Не известная ошибка')

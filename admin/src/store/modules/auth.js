@@ -14,8 +14,8 @@ export default {
     actions:{
         [AUTH_LOGOUT]: ({commit}) => {
             return new Promise((resolve) => {
-                commit(AUTH_LOGOUT)
-                localStorage.removeItem('user-token') // clear your user's token from localstorage
+                commit(AUTH_LOGOUT);
+                localStorage.removeItem('user-token');
                 resolve()
             })
         },
@@ -26,7 +26,7 @@ export default {
 
                 Vue.http.post(HOST+'/user/login', JSON.stringify(user))
                     .then(resp => {
-                        const token = resp.data.token;
+                        const token = resp.data;
                         localStorage.setItem('user-token', token);
                         commit(AUTH_SUCCESS, token);
                         resolve(resp)
@@ -45,7 +45,7 @@ export default {
             state.status = 'loading'
         },
         [AUTH_SUCCESS]: (state, token) => {
-            state.status = 'success'
+            state.status = 'success';
             state.token = token
         },
         [AUTH_ERROR]: (state) => {

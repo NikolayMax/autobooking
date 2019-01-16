@@ -3,7 +3,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const expressSession = require('express-session');
+const RedisStore = require('connect-redis')(session);
 require('./passport.config');
 
 var app = express();
@@ -12,7 +12,7 @@ app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
-app.use(expressSession({secret: 'SECRET'}));
+app.use(session({secret: 'SECRET'}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
