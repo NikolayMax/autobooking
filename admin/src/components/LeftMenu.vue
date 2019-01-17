@@ -4,12 +4,17 @@
             drawer: true,
             items: [
                 { title: 'Раписание', icon: 'calendar_today' },
-                { title: 'Сотрудники', icon: 'accessibility_new' },
+                { title: 'Сотрудники', icon: 'accessibility_new', route:'/employees' },
                 { title: 'Услуги', icon: 'local_car_wash' }
             ],
             mini: false,
             right: null
         }),
+        methods:{
+            toRoute(route){
+                this.$router.push(route);
+            }
+        },
         computed:{
             isAuth:function(){
                 return this.$store.getters.isAuthenticated
@@ -53,15 +58,15 @@
 
             <v-list-tile
                     v-for="item in items"
-                    :key="item.title"
-            >
-                <v-list-tile-action>
-                    <v-icon>{{ item.icon }}</v-icon>
-                </v-list-tile-action>
+                    v-on:click="toRoute(item.route)"
+                    :key="item.title">
+                    <v-list-tile-action>
+                        <v-icon>{{ item.icon }}</v-icon>
+                    </v-list-tile-action>
 
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                </v-list-tile-content>
+                    <v-list-tile-content>
+                        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                    </v-list-tile-content>
             </v-list-tile>
         </v-list>
     </v-navigation-drawer>

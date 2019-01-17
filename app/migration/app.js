@@ -9,9 +9,7 @@ dbconfigmigration.dev.password = dbconfig.password;
 dbconfigmigration.dev.user = dbconfig.user;
 dbconfigmigration.dev.host = dbconfig.host;
 
-let promise = require('./admin/app.js');
-promise
-    .then(()=>{db.query('select * from `auto_admin`.`organizations`')})
+db.query('select * from `auto_admin`.`organizations`')
     .then(function(results){
 
         var promise = new Promise(function(res){
@@ -19,6 +17,9 @@ promise
         });
 
         async.forEachOf(results, (value, key, callback)=>{
+            if(!value['organization_id'])
+                return;
+
             promise = promise.then(()=>{
                 console.log(`\nStart migrations organization №: ${value['organization_id']}`);
                 dbconfigmigration.dev.database = `${dbconfigmigration.prefixdb}_${value['organization_id']}`;

@@ -11,6 +11,8 @@ import store from './store'
 
 Vue.use(VueResource);
 Vue.use(Vuetify);
+Vue.HOST = 'http://localhost';
+Vue.ORGID = 1;
 
 Vue.config.productionTip = false;
 
