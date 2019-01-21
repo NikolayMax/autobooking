@@ -56,7 +56,10 @@
         mounted() {
             console.log(123);
             this.$http.get('http://localhost:3000/user/isAuth')
-                .then((res)=>console.log(res));
+                .then((res)=>{
+                    console.log(res)
+
+                });
         },
         data:()=>({
             phone:'',
@@ -83,7 +86,7 @@
                 const { phone, password } = this;
 
                 this.$store.dispatch(AUTH_REQUEST, { phone, password })
-                    .then((err)=>{
+                    .then(()=>{
                         this.$router.push('/')
                     })
                     .catch(err=>{

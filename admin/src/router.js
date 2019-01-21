@@ -6,6 +6,7 @@ import Login from './components/Login.vue';
 import Register from './components/Register.vue';
 import Employees from './components/Employees.vue';
 import Services from './components/Services.vue';
+import Positions from './components/Positions.vue';
 
 import store from './store';
 
@@ -27,6 +28,7 @@ const routes = [
     {path:'/services', component:Services, meta:{title:'Услуги'}},
     {path:'/register', component:Register, meta:{title:'Регистрация'}},
     {path:'/employees', component:Employees, meta:{title:'Сотрудники'}},
+    {path:'/positions', component:Positions, meta:{title:'Должность'}},
 ];
 
 export default new VueRouter({

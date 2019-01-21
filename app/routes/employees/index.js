@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../../db.js');
-const ServiceController = require('./controller');
+const EmployeesController = require('./controller');
 
 module.exports = ()=>{
 
-    let controller = new ServiceController(db);
+    let controller = new EmployeesController(db);
 
-    router.get('/:orgid', controller.getEmployess.bind(controller));
+    router.get('/:orgid', controller.isOrgid, controller.getEmployees.bind(controller));
+    router.post('/:orgid', controller.isOrgid, controller.addEmployee.bind(controller));
 
     return router;
 };

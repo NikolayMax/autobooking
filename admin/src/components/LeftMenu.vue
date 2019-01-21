@@ -5,7 +5,8 @@
             items: [
                 { title: 'Раписание', icon: 'calendar_today' },
                 { title: 'Сотрудники', icon: 'accessibility_new', route:'/employees' },
-                { title: 'Услуги', icon: 'local_car_wash' }
+                { title: 'Услуги', icon: 'local_car_wash' },
+                { title: 'Должность', icon: 'local_car_wash', route:'/positions'}
             ],
             mini: false,
             right: null

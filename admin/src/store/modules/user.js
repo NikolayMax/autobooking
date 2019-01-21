@@ -16,7 +16,7 @@ export default {
 
                 Vue.http.post(HOST+'/user/register', user)
                     .then((response)=>{
-                        const token = resp.data.token;
+                        const token = response.data.token;
                         localStorage.setItem('user-token', token);
                         commit(USER_SUCCESS, token);
                         resolve(response)
