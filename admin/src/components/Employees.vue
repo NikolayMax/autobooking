@@ -64,7 +64,7 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn color="blue darken-1" flat @click="dialog = false">Закрыть</v-btn>
-                        <v-btn color="blue darken-1" flat @click="dialog = false">Сохранить</v-btn>
+                        <v-btn color="blue darken-1" flat @click="saveEmployee()">Сохранить</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -105,8 +105,9 @@
             saveEmployee(){
                 let {firstname, lastname, patronymic, phone, password, position, email} = this;
 
-                this.$http.get(`${Vue.HOST}/employees/${Vue.ORGID}`, {firstname, lastname, patronymic, phone, password, position, email})
+                this.$http.post(`${Vue.HOST}/employees/${Vue.ORGID}`, {firstname, lastname, patronymic, phone, password, position, email})
                     .then(()=>{
+                        this.dialog=false;
                         return this.getEmployees();
                     })
                     .then(response=>{

@@ -15,17 +15,17 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db, callback) {
-    db.createTable('services_car', {
+    db.createTable('services', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
         name: 'string',
         'id_mark': { type: 'int'},
         price: 'real',
-        diration: 'string',
+        duration: 'string',
     }, callback)
 };
 
 exports.down = function(db, callback) {
-    db.dropTable('services_car', {}, callback)
+    db.dropTable('services', {}, callback)
 };
 
 exports._meta = {

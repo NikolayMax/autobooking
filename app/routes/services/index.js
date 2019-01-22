@@ -7,7 +7,8 @@ module.exports = ()=>{
 
     let controller = new ServiceController(db);
 
-    router.get('/:orgid', controller.getServicesForOrgId.bind(controller));
+    router.get('/:orgid', controller.isOrgid.bind(controller), controller.getServicesForOrgId.bind(controller));
+    router.post('/:orgid', controller.isOrgid.bind(controller), controller.addService.bind(controller));
 
     return router;
 };
