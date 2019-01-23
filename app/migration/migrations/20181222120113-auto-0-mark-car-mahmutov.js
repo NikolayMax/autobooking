@@ -15,14 +15,14 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db, callback) {
-    db.createTable('mark_car', {
+    db.createTable('cars', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
         name: 'string'
     }, callback)
 };
 
 exports.down = function(db, callback) {
-    db.dropTable('mark_car', {}, callback)
+    db.dropTable('cars', {}, callback)
 };
 
 exports._meta = {

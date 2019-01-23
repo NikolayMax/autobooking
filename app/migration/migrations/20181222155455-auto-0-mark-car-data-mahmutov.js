@@ -18,7 +18,7 @@ exports.up = function (db, callback)
 {
     let arr = [];
     async.forEachOf(marks, function(value, key){
-        arr.push(db.insert.bind(db,'mark_car', ['name'], [value]));
+        arr.push(db.insert.bind(db,'cars', ['name'], [value]));
     });
     async.series(arr, callback);
 };

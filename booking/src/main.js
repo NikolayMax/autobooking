@@ -4,6 +4,9 @@ import App from './App.vue'
 import Vuetify from 'vuetify'
 import VueResource from 'vue-resource';
 
+Vue.PORT = 3000;
+Vue.HOST = `http://localhost:${Vue.PORT}`;
+Vue.ORGID = `1`;
 Vue.use(VueResource);
 Vue.use(Vuetify);
 

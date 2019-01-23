@@ -10,7 +10,9 @@
         <v-container fill-height>
             <v-layout row wrap align-center>
                 <v-flex class="text-xs-center">
-                    <v-btn depressed v-for="item in times"
+                    <v-btn depressed
+                           v-for="item in times"
+                           :key="item.id"
                            :color="item.selected ? 'primary' : ''"
                            :disabled="item.disable"
                            v-on:click="selectedTime.selected=false;selectedTime=item;item.selected=true">{{item.title}}</v-btn>

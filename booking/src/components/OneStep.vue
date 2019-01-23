@@ -1,17 +1,16 @@
 <script>
+    import Vue from 'vue';
+
     export default{
         name:'OneStep',
         methods:{
             getService: function(){
-                this.$http.get('http://localhost:3000/services/getServices?orgid=1')
-                    .then(function(response){
+                this.$http.get(`${Vue.HOST}/services/${Vue.ORGID}`)
+                    .then(response=>{
                         this.items = response.data;
                         console.log(response.data)
-
                     })
-                    .catch(function(error){
-                        console.log(error);
-                    });
+                    .catch(error=>console.log(error));
             }
         },
         mounted: function () {

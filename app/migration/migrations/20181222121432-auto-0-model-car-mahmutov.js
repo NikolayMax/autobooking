@@ -15,7 +15,7 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db, callback) {
-    db.createTable('model_car', {
+    db.createTable('models', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
         name: 'string',
         'id_mark': { type: 'int'},
@@ -23,7 +23,7 @@ exports.up = function(db, callback) {
 };
 
 exports.down = function(db, callback) {
-    db.dropTable('model_car', {}, callback)
+    db.dropTable('models', {}, callback)
 };
 
 
