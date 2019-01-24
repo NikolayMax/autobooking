@@ -24,7 +24,7 @@
                         <v-container grid-list-md>
                             <v-layout wrap>
                                 <v-flex xs12>
-                                    <v-text-field label="Нзвание" required v-model="name"></v-text-field>
+                                    <v-text-field label="Название" required v-model="name"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="Цена*" v-model="price"></v-text-field>
@@ -36,6 +36,36 @@
                                             persistent-hint
                                             required
                                     ></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-select
+                                            v-model="selectedEmployees"
+                                            :items="employees"
+                                            :item-name="`item`"
+                                            label="Выберите мастера для этой услуги"
+                                            multiple>
+                                        <v-list-tile
+                                                slot="prepend-item"
+                                                ripple
+                                                @click="toggle">
+                                            <v-list-tile-action>
+                                                <v-icon :color="selectedCars.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+                                            </v-list-tile-action>
+                                            <v-list-tile-title>Выбрать всё</v-list-tile-title>
+                                        </v-list-tile>
+                                        <v-divider
+                                                slot="prepend-item"
+                                                class="mt-2"
+                                        ></v-divider>
+                                        <v-divider
+                                                slot="append-item"
+                                                class="mb-2"
+                                        ></v-divider>
+                                        <v-list-tile
+                                                slot="append-item"
+                                                disabled>
+                                        </v-list-tile>
+                                    </v-select>
                                 </v-flex>
                             </v-layout>
                         </v-container>
@@ -71,14 +101,37 @@
                     { text: 'Цена', value: 'price' },
                 ],
                 services: [],
+                employees:[],
+                cars:[],
+                selectedCars: [],
+                selectedEmployees:[],
                 name:null,
                 price:null,
                 duration:null
             }
         },
         methods:{
+            toggle () {
+                this.$nextTick(() => {
+                    if (this.likesAllFruit) {
+                        this.selectedCars = []
+                    } else {
+                        this.selectedCars = this.cars.slice()
+                    }
+                })
+            },
+            getName(employee){
+                console.log(employee);
+                return `${employee.firstname} ${employee.lastname} ${employee.patronymic}`;
+            },
             getServices(){
                 return this.$http.get(`${Vue.HOST}/services/${Vue.ORGID}`)
+            },
+            getEmployee(){
+                return this.$http.get(`${Vue.HOST}/employees/${Vue.ORGID}`)
+            },
+            getCars(){
+                return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`)
             },
             saveService(){
                 let {name, duration, price} = this;
@@ -95,10 +148,39 @@
                     .catch(err=>console.log(err));
             }
         },
+        computed: {
+            likesAllFruit () {
+                return this.selectedCars.length === this.cars.length
+            },
+            likesSomeFruit () {
+                return this.selectedCars.length > 0 && !this.likesAllFruit
+            },
+            icon () {
+                if (this.likesAllFruit) return 'mdi-close-box'
+                if (this.likesSomeFruit) return 'mdi-minus-box'
+                return 'mdi-checkbox-blank-outline'
+            }
+        },
+
         mounted(){
             this.getServices()
                 .then(response=>{
                     this.services = response.data;
+                    return this.getCars();
+                })
+                .then(response=>{
+                    let cars = response.data;
+
+                    this.cars = cars.map(car=>{
+                        if(car.models)
+                            return car.models.map(model=>({id:car.id,name:`${car.name} - ${model.name}`, modelName:model.name}));
+                        else
+                            return car;
+                    });
+                    return this.getEmployee();
+                })
+                .then(response=>{
+                    this.employees = response.data;
                 })
                 .catch(err=>console.log(err))
         }
