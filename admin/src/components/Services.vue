@@ -15,7 +15,7 @@
             </v-data-table>
         </v-card>
         <v-layout row justify-center>
-            <v-dialog v-model="dialog" persistent max-width="600px">
+            <v-dialog v-model="dialog" persistent max-width="600px" scrollable>
                 <v-card>
                     <v-card-title>
                         <span class="headline">Добавить услугу</span>
@@ -39,33 +39,30 @@
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-select
-                                            v-model="selectedEmployees"
                                             :items="employees"
-                                            :item-name="`item`"
+                                            v-model="selectedEmployees"
+                                            :item-text="getNameEmployee"
+                                            item-value="id"
                                             label="Выберите мастера для этой услуги"
-                                            multiple>
+                                            multiple
+                                            return-object>
                                         <v-list-tile
                                                 slot="prepend-item"
                                                 ripple
                                                 @click="toggle">
-                                            <v-list-tile-action>
-                                                <v-icon :color="selectedCars.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
-                                            </v-list-tile-action>
                                             <v-list-tile-title>Выбрать всё</v-list-tile-title>
                                         </v-list-tile>
-                                        <v-divider
-                                                slot="prepend-item"
-                                                class="mt-2"
-                                        ></v-divider>
-                                        <v-divider
-                                                slot="append-item"
-                                                class="mb-2"
-                                        ></v-divider>
-                                        <v-list-tile
-                                                slot="append-item"
-                                                disabled>
-                                        </v-list-tile>
                                     </v-select>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-treeview
+                                            v-model="selectedCars"
+                                            :items="cars"
+                                            item-text="name"
+                                            item-children="models"
+                                            multiple-active
+                                            selectable>
+                                    </v-treeview>
                                 </v-flex>
                             </v-layout>
                         </v-container>
@@ -105,24 +102,22 @@
                 cars:[],
                 selectedCars: [],
                 selectedEmployees:[],
+                tree:[],
                 name:null,
                 price:null,
                 duration:null
             }
         },
         methods:{
+            getNameEmployee:item => `${item.lastname} ${item.firstname} ${item.patronymic}`,
             toggle () {
                 this.$nextTick(() => {
-                    if (this.likesAllFruit) {
-                        this.selectedCars = []
+                    if (this.allEmployees) {
+                        this.selectedEmployees = []
                     } else {
-                        this.selectedCars = this.cars.slice()
+                        this.selectedEmployees = this.employees.slice()
                     }
                 })
-            },
-            getName(employee){
-                console.log(employee);
-                return `${employee.firstname} ${employee.lastname} ${employee.patronymic}`;
             },
             getServices(){
                 return this.$http.get(`${Vue.HOST}/services/${Vue.ORGID}`)
@@ -134,14 +129,21 @@
                 return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`)
             },
             saveService(){
-                let {name, duration, price} = this;
-                console.log(name, duration, price);
+                let {name, duration, price, selectedCars, selectedEmployees} = this,
+                serviceId=null;
+
+                selectedCars = selectedCars.map(car=>car);
+                selectedEmployees = selectedEmployees.map(employee=>employee.id);
 
                 this.$http.post(`${Vue.HOST}/services/${Vue.ORGID}`, {name, duration, price})
-                    .then(()=>{
+                    .then((response)=>{
                         this.dialog=false;
-                        return this.getServices();
+                        serviceId = response.data.insertId;
+
+                        return this.$http.post(`${Vue.HOST}/services-models/${Vue.ORGID}`, {serviceId:serviceId, models:selectedCars})
                     })
+                    .then(response=>this.$http.post(`${Vue.HOST}/services_employees/${Vue.ORGID}`, {serviceId:serviceId, employees:selectedEmployees}))
+                    .then(response=>this.getServices())
                     .then(response=>{
                         this.services = response.data;
                     })
@@ -149,17 +151,9 @@
             }
         },
         computed: {
-            likesAllFruit () {
-                return this.selectedCars.length === this.cars.length
+            allEmployees () {
+                return this.selectedEmployees.length === this.employees.length
             },
-            likesSomeFruit () {
-                return this.selectedCars.length > 0 && !this.likesAllFruit
-            },
-            icon () {
-                if (this.likesAllFruit) return 'mdi-close-box'
-                if (this.likesSomeFruit) return 'mdi-minus-box'
-                return 'mdi-checkbox-blank-outline'
-            }
         },
 
         mounted(){
@@ -171,12 +165,8 @@
                 .then(response=>{
                     let cars = response.data;
 
-                    this.cars = cars.map(car=>{
-                        if(car.models)
-                            return car.models.map(model=>({id:car.id,name:`${car.name} - ${model.name}`, modelName:model.name}));
-                        else
-                            return car;
-                    });
+                    this.cars = cars;
+
                     return this.getEmployee();
                 })
                 .then(response=>{
