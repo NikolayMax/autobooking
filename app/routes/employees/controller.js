@@ -1,24 +1,9 @@
-class EmployeesController{
-    constructor(db){
-        this.db = db;
-    }
-    isOrgid(req, res, next){
-        if(!req.params.orgid)
-            return next('Не найдена организация '+req.params.orgid);
+const BaseController = require('../BaseController');
 
-        if(/[^0-9]/g.test(req.params.orgid)){
-            return next('Не найдена организация '+req.params.orgid);
-        }
-        this.db.query('SELECT * FROM auto_admin.organizations WHERE organization_id = ?', [req.params.orgid])
-            .then((results)=>{
-                if(results[0])
-                    next();
-                else
-                    next('Не найдена организация '+req.params.orgid);
-            })
-            .catch(err=>{
-                next(err)
-            })
+class EmployeesController extends BaseController{
+    constructor(db){
+        super();
+        this.db = db;
     }
     addEmployee(req, res, next){
         let {firstname, lastname, patronymic, phone, password, email} = req.body;
@@ -49,7 +34,7 @@ class EmployeesController{
                 else
                     return new Promise((res, rej) => rej('Не найдена организация '+req.params.orgid));
             })
-            .then(results => res.status(200).send(results))
+            .then(results => res.json(results))
             .catch(err => next(err));
     }
 

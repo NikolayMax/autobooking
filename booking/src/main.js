@@ -4,6 +4,8 @@ import App from './App.vue'
 import Vuetify from 'vuetify'
 import VueResource from 'vue-resource';
 
+import store from './store'
+
 Vue.PORT = 3000;
 Vue.HOST = `http://localhost:${Vue.PORT}`;
 Vue.ORGID = `1`;
@@ -12,5 +14,6 @@ Vue.use(Vuetify);
 
 
 new Vue({
-  render: h => h(App),
+    store,
+    render: h => h(App),
 }).$mount('#app');

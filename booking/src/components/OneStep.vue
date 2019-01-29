@@ -28,7 +28,6 @@
                 item-value="id"
                 return-object
                 label="Выберите услугу"
-                v-on:change="setService"
                 multiple>
             <template
                     slot="selection"
@@ -45,30 +44,6 @@
                 </v-flex>
             </template>
         </v-select>
-        <div class="v-label theme--light mb-3">Выберите мастера</div>
-        <v-layout row wrap>
-            <v-flex
-                    v-for="(empl, n) in employees"
-                    @click="employee = empl"
-                    :key="n"
-                    xs2
-                    d-flex>
-                <v-card>
-                    <v-img
-                            :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
-                            :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
-                            aspect-ratio="1"
-                            class="grey lighten-2">
-                        <v-avatar color="blue" size="30" class="mt-2 ml-2" v-show="empl.id === employee.id">
-                            <v-icon dark size="20">done</v-icon>
-                        </v-avatar>
-                    </v-img>
-                    <v-card-actions class="white caption font-weight-thin">
-                        {{empl.firstname}} {{empl.lastname}}
-                    </v-card-actions>
-                </v-card>
-            </v-flex>
-        </v-layout>
         <div class="title pb-4 pt-5" >Выбранные услуги</div>
         <v-data-table
                 :headers="headers"
@@ -93,22 +68,12 @@
     </div>
 </template>
 <script>
+    import {SET_SERVICE, SET_CAR, SET_MODEL} from '../store/actions/selected';
     import Vue from 'vue';
 
     export default{
         name:'OneStep',
         methods:{
-            setService(services){
-
-                this.getEmployees(services.map(service=>service.id), this.model.id)
-                    .then(response=>{
-                        this.employees = response.data;
-                    })
-
-            },
-            setEmployee(employee){
-                this.employee = employee;
-            },
             getCars(){
                 return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`)
             },
@@ -117,32 +82,45 @@
                     .then(response=>{
                         this.services = response.data;
                     })
-            },
-            getEmployees: function(serviceIds, model){
-                return this.$http.get(`${Vue.HOST}/employees/${Vue.ORGID}`, {params:{serviceIds, model}})
             }
+        },
+        computed: {
+            selectedServices: {
+                get() {
+                    return this.$store.state.selected.services
+                },
+                set(newValue) {
+                    return this.$store.dispatch(SET_SERVICE, newValue)
+                }
+            },
+            car: {
+                get() {
+                    return this.$store.state.selected.car
+                },
+                set(newValue) {
+                    return this.$store.dispatch(SET_CAR, newValue)
+                }
+            },
+            model: {
+                get() {
+                    return this.$store.state.selected.model
+                },
+                set(newValue) {
+                    return this.$store.dispatch(SET_MODEL, newValue)
+                }
+            },
         },
         mounted: function () {
             this.getCars()
                 .then(response=>{
                     this.cars = response.data;
-                    return this.getEmployees()
-                })
-                .then(response=>{
-                    this.employees = response.data;
                 })
                 .catch(error=>console.log(error));
         },
         data: () => ({
             cars:[],
-            car:{},
-            models:[],
             services: [],
-            employees:[],
-            employee:{},
-            selectedServices: [],
             mark:[],
-            model:[],
             headers: [
                 {
                     text: 'Название',
