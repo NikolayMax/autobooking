@@ -1,21 +1,4 @@
-<script>
-    import OneStep from './OneStep';
-    import TwoStep from './TwoStep';
-    import ThreeStep from './ThreeStep';
 
-    export default {
-        components: {
-            OneStep,
-            TwoStep,
-            ThreeStep
-        },
-        data () {
-            return {
-                e1: 0
-            }
-        }
-    }
-</script>
 <template>
     <v-stepper v-model="e1">
         <v-stepper-header>
@@ -64,13 +47,38 @@
                        @click="e1 = 2">
                     Назад
                 </v-btn>
-                <v-btn color="primary">
+                <v-btn color="primary" @click="signUp()">
                     Записаться
                 </v-btn>
             </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
 </template>
+<script>
+    import OneStep from './OneStep';
+    import TwoStep from './TwoStep';
+    import ThreeStep from './ThreeStep';
+
+    export default {
+        components: {
+            OneStep,
+            TwoStep,
+            ThreeStep
+        },
+        methods:{
+            signUp(){
+                let obj = {
+                    services:this.$store.selected.services
+                }
+            }
+        },
+        data () {
+            return {
+                e1: 0
+            }
+        }
+    }
+</script>
 
 <style scoped>
 .minHeight{

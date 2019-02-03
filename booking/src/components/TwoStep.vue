@@ -23,11 +23,12 @@
 </template>
 
 <script>
+    import {SET_DATE,SET_TIME} from '../store/actions/selected';
+
     export default {
         name: "TwoStep",
         data () {
             return {
-                selectedTime:{},
                 times:[
                     {
                         title:'11:30',
@@ -104,10 +105,28 @@
                         selected:false
                     },
                 ],
-                picker: new Date().toISOString().substr(0, 10),
+
                 landscape: false,
                 reactive: false
             }
+        },
+        computed: {
+            picker: {
+                get() {
+                    return this.$store.state.selected.picker
+                },
+                set(newValue) {
+                    return this.$store.dispatch(SET_DATE, newValue)
+                }
+            },
+            selectedTime: {
+                get() {
+                    return this.$store.state.selected.time
+                },
+                set(newValue) {
+                    return this.$store.dispatch(SET_TIME, newValue)
+                }
+            },
         }
     }
 </script>
