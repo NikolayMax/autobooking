@@ -17,13 +17,17 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db, callback) {
     db.createTable('visit_item', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
-        'name': { type: 'string'},
-        'id_client': { type: 'int'},
+        'service_name': 'string',
+        'service_duration':'string',
+        'service_pay_sum':'real',
+        'name_car':'string',
+        'name_model':'string',
+        'visit_id':'int',
     }, callback)
 };
 
 exports.down = function(db, callback) {
-    db.dropTable('visits', {}, callback)
+    db.dropTable('visit_item', {}, callback)
 };
 
 exports._meta = {

@@ -17,7 +17,7 @@ db.query('select * from `auto_admin`.`organizations`')
         });
 
         async.forEachOf(results, (value, key, callback)=>{
-            if(!value['organization_id'])
+            if(typeof value['organization_id'] !== 'number')
                 return;
 
             promise = promise.then(()=>{

@@ -58,6 +58,7 @@
     import OneStep from './OneStep';
     import TwoStep from './TwoStep';
     import ThreeStep from './ThreeStep';
+    import Vue from 'vue';
 
     export default {
         components: {
@@ -67,9 +68,17 @@
         },
         methods:{
             signUp(){
-                let obj = {
-                    services:this.$store.selected.services
-                }
+                let {user} = this.$store.state;
+                let {services, car, model, date, time} = this.$store.state.selected;
+
+                this.$http.post(`${Vue.HOST}/visit/1`, {
+                    user,
+                    services,
+                    car,
+                    model,
+                    date,
+                    time:time.title
+                })
             }
         },
         data () {
