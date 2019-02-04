@@ -2,8 +2,27 @@
     <div>
         <v-container fill-height>
             <v-layout row wrap align-center>
-                <v-flex class="text-xs-center">
-                    <v-date-picker v-model="picker"></v-date-picker>
+                <v-flex xs12 lg6>
+                    <v-menu ref="menu1"
+                            :close-on-content-click="false"
+                            v-model="menu1"
+                            :nudge-right="40"
+                            lazy
+                            transition="scale-transition"
+                            offset-y
+                            max-width="290px"
+                            min-width="290px"
+                            full-width>
+                        <v-text-field
+                                slot="activator"
+                                v-model="picker"
+                                label="Date"
+                                hint="MM/DD/YYYY format"
+                                persistent-hint
+                                prepend-icon="event"
+                        ></v-text-field>
+                        <v-date-picker v-model="picker" @input="menu1 = false"></v-date-picker>
+                    </v-menu>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -29,91 +48,24 @@
         name: "TwoStep",
         data () {
             return {
-                times:[
-                    {
-                        title:'11:30',
-                        disable:true,
-                        selected:false
-                    },{
-                        title:'12:00',
-                        disable:true,
-                        selected:false
-                    },
-                    {
-                        title:'12:30',
-                        disable:true,
-                        selected:false
-                    },
-                    {
-                        title:'13:00',
-                        disable:true,
-                        selected:false
-                    },
-                    {
-                        title:'13:30',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'14:00',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'14:30',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'15:00',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'15:30',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'16:00',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'16:30',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'17:00',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'17:30',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'18:00',
-                        disable:false,
-                        selected:false
-                    },
-                    {
-                        title:'18:30',
-                        disable:true,
-                        selected:false
-                    },
-                ],
-
+                times:[],
+                date: new Date().toISOString().substr(0, 10),
+                dateFormatted: new Date().toISOString().substr(0, 10),
+                menu1: false,
                 landscape: false,
                 reactive: false
             }
         },
+        mounted:function(){
+            this.times = '08:00,08:30,09:00,09:30,10:00,10:30,11:00,11:30,12:00,12:30,13:00,13:30,14:00,14:30,15:00,15:30,16:00,16:30,17:00,17:30,18:00,18:30,19:00,19:30,20:00,20:30,21:00,21:30,22:00,22:30,23:00,23:30,00:00'
+                        .split(',')
+                        .map(time=>({selected:false,disabled:false,title:time}));
+
+        },
         computed: {
             picker: {
                 get() {
-                    return this.$store.state.selected.picker
+                    return this.$store.state.selected.date
                 },
                 set(newValue) {
                     return this.$store.dispatch(SET_DATE, newValue)
