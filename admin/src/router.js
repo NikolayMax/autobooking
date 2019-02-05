@@ -8,6 +8,7 @@ import Employees from './components/Employees.vue';
 import Services from './components/Services.vue';
 import Positions from './components/Positions.vue';
 import Cars from './components/Cars.vue';
+import Visits from './components/Visits.vue';
 
 import store from './store';
 
@@ -31,6 +32,7 @@ const routes = [
     {path:'/employees', component:Employees, meta:{title:'Сотрудники'}},
     {path:'/positions', component:Positions, meta:{title:'Должность'}},
     {path:'/cars', component:Cars, meta:{title:'Автомобили'}},
+    {path:'/visits', component:Visits, meta:{title:'Визиты'}},
 ];
 
 export default new VueRouter({

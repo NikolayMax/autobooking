@@ -6,6 +6,34 @@ class VisitController extends BaseController{
         this.db = db;
 
     }
+    MinutesToString(number) {
+        var hours = Math.floor(number / 60);
+
+        if (hours.toString().length === 1) {
+            hours = '0' + hours;
+        }
+
+        var minutes = number % 60;
+
+        if (minutes.toString().length === 1) {
+            minutes = '0' + minutes;
+        }
+
+        return hours + ":" + minutes;
+    }
+    summaryMinutes(times){
+        let hourse=0,minutes=0, d = new Date();
+        times.forEach(time=>{
+            let h = time.split(':')[0]*1;
+            let m = time.split(':')[1]*1;
+            hourse+=h;
+            minutes+=m;
+        });
+        d.setHours(hourse);
+        d.setMinutes(minutes);
+
+        return this.MinutesToString(d.getHours()*60+d.getMinutes())
+    }
     create(req, res, next){
         let {services, car, model, date, time, user} = req.body;
 
@@ -23,7 +51,9 @@ class VisitController extends BaseController{
                 else if(client.insertId)
                     idClient = client.insertId;
 
-                return this.db.query(`INSERT INTO auto_${req.params.orgid}.visits(id_client) VALUE(?)`, [idClient]);
+                var times = services.map(service=>service.duration);
+                times.push(time);
+                return this.db.query(`INSERT INTO auto_${req.params.orgid}.visits(id_client, startTime, endTime, date) VALUE(?, ?, ?, ?)`, [idClient, time, this.summaryMinutes(times), date]);
             })
             .then(results=>{
                 return this.db.query(`INSERT INTO auto_${req.params.orgid}.visit_item(service_name, service_duration, service_pay_sum, name_car, name_model, visit_id) VALUES ?`,
@@ -36,9 +66,16 @@ class VisitController extends BaseController{
                 res.json('ok');
             })
             .catch(err => {
+                console.log(err)
                 next(err);
             });
 
+    }
+    list(req, res, next){
+        this.db.query(`SELECT * FROM auto_${req.params.orgid}.visits`)
+            .then(visits=>{
+                res.json(visits);
+            })
     }
 }
 module.exports = VisitController;

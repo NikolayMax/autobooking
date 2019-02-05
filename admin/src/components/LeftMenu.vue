@@ -7,7 +7,8 @@
                 { title: 'Сотрудники', icon: 'accessibility_new', route:'/employees' },
                 { title: 'Услуги', icon: 'local_car_wash', route:'/services'},
                 { title: 'Должность', icon: 'local_car_wash', route:'/positions'},
-                { title: 'Автомобили', icon: 'local_car_wash', route:'/cars'}
+                { title: 'Автомобили', icon: 'local_car_wash', route:'/cars'},
+                { title: 'Визиты', icon: 'local_car_wash', route:'/visits'}
             ],
             mini: false,
             right: null

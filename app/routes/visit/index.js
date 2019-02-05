@@ -8,6 +8,7 @@ module.exports = (()=>{
     let controller = new VisitController(db);
 
     router.post('/:orgid', controller.isOrgid.bind(controller), controller.create.bind(controller));
+    router.get('/:orgid', controller.isOrgid.bind(controller), controller.list.bind(controller));
 
 
     return router;

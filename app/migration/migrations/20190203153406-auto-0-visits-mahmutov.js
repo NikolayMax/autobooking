@@ -18,6 +18,9 @@ exports.up = function(db, callback) {
     db.createTable('visits', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
         'id_client': { type: 'int'},
+        'startTime':'string',
+        'endTime':'string',
+        'date':'datetime'
     }, callback)
 };
 
