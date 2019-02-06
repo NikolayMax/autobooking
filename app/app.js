@@ -11,15 +11,21 @@ app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
-app.use(session({secret: 'SECRET'}));
+app.use(session({
+    secret: 'SECRET',
+    name: 'mysession',
+    keys: ['vueauthrandomkey'],
+    maxAge:24 * 60 * 60 * 1000
+}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use((req, res, next) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'POST,GET');
-    res.set('Access-Control-Allow-Headers', '*');
-    next();
-});
+// app.use((req, res, next) => {
+//     res.set("Access-Control-Allow-Credentials", "true");
+//     res.set('Access-Control-Allow-Origin', '*');
+//     res.set('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+//     res.set('Access-Control-Allow-Headers', '*');
+//     next();
+// });
 app.use(require('./routes'));
 app.use(cookieParser());
 app.use(function(err, req, res, next){

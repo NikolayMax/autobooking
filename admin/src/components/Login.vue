@@ -50,16 +50,11 @@
 
 <script>
 
-    import {AUTH_REQUEST} from '../store/actions/auth'
+    import {AUTH_REQUEST, AUTH_LOGOUT} from '../store/actions/auth'
 
     export default{
         mounted() {
-            console.log(123);
-            this.$http.get('http://localhost:3000/user/isAuth')
-                .then((res)=>{
-                    console.log(res)
 
-                });
         },
         data:()=>({
             phone:'',
@@ -87,7 +82,7 @@
 
                 this.$store.dispatch(AUTH_REQUEST, { phone, password })
                     .then(()=>{
-                        this.$router.push('/')
+                        this.$router.push('/visits')
                     })
                     .catch(err=>{
                         if(err){

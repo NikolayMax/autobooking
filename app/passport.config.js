@@ -12,7 +12,7 @@ passport.deserializeUser(function(id, done) {
     console.log('Десерилизация: ', id);
     db.query('SELECT * from auto_admin.users WHERE id = ?', [id])
         .then(function(user){
-            done(null, user?user:false);
+            done(null, user);
         })
 });
 passport.use(new LocalStrategy({usernameField: 'phone'},function(phone, password, done){

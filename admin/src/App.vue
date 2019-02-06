@@ -17,6 +17,7 @@
 <script>
 import ToolBar from './components/ToolBar'
 import LeftMenu from './components/LeftMenu'
+import {AUTH_LOGOUT} from './store/actions/auth';
 
 export default {
     name: 'App',
@@ -33,6 +34,13 @@ export default {
         return {
         //
         }
+    },
+    mounted:function(){
+        this.$http.get('http://localhost:3000/user/isAuth')
+            .then((res)=>{
+                if(res.data === false)
+                    this.$store.dispatch(AUTH_LOGOUT)
+            });
     }
 }
 </script>

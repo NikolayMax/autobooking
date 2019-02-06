@@ -7,7 +7,7 @@ class UserController{
         this.db = db;
     }
     isAuth(req, res, next){
-        res.json(req.isAuthenticated());
+        res.json(req.session);
     }
     login(req, res, next){
         passport.authenticate('local', function(err, user, info) {

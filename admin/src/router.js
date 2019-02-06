@@ -13,26 +13,26 @@ import Visits from './components/Visits.vue';
 import store from './store';
 
 Vue.use(VueRouter);
-
+let isAuth = (to, from, next)=> {
+    if(store.getters.isAuthenticated){
+        next()
+    }else{
+        next('/login')
+    }
+};
 const routes = [
     {
         path:'/',
         component:Home,
-        beforeEnter: (to, from, next)=> {
-            if(store.getters.isAuthenticated){
-                next()
-            }else{
-                next('/login')
-            }
-        }
+        beforeEnter: isAuth
     },
     {path:'/login', component:Login, meta:{title:'Авторизация'}},
-    {path:'/services', component:Services, meta:{title:'Услуги'}},
+    {path:'/services', component:Services, meta:{title:'Услуги'}, beforeEnter: isAuth},
     {path:'/register', component:Register, meta:{title:'Регистрация'}},
-    {path:'/employees', component:Employees, meta:{title:'Сотрудники'}},
-    {path:'/positions', component:Positions, meta:{title:'Должность'}},
-    {path:'/cars', component:Cars, meta:{title:'Автомобили'}},
-    {path:'/visits', component:Visits, meta:{title:'Визиты'}},
+    {path:'/employees', component:Employees, meta:{title:'Сотрудники'}, beforeEnter: isAuth},
+    {path:'/positions', component:Positions, meta:{title:'Должность'}, beforeEnter: isAuth},
+    {path:'/cars', component:Cars, meta:{title:'Автомобили'}, beforeEnter: isAuth},
+    {path:'/visits', component:Visits, meta:{title:'Визиты'}, beforeEnter: isAuth},
 ];
 
 export default new VueRouter({

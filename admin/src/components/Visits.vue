@@ -5,7 +5,8 @@
                     :headers="headers"
                     :items="visits">
                 <template slot="items" slot-scope="props">
-                    <td>{{ props.item.id }}</td>
+                    <td>№{{ props.item.id }}</td>
+                    <td>{{ props.item.date | date('MM/DD/YYYY')}} </td>
                 </template>
             </v-data-table>
         </v-card>
@@ -25,6 +26,7 @@
                         align: 'left',
                         value: 'position'
                     },
+                    { text: 'Дата', value: 'date' },
                 ],
                 visits:[]
             }
