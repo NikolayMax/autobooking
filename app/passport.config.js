@@ -4,7 +4,7 @@ const LocalStrategy = require('passport-local');
 const db = require('./db');
 
 passport.serializeUser(function(user, done) {
-    console.log('Серилизация: ', user);
+    console.log('Серилизация: ', user.id);
     done(null, user.id);
 });
 

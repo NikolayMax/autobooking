@@ -3,6 +3,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const RedisStore = require('connect-redis')(session);
 require('./passport.config');
 
 var app = express();
@@ -12,24 +13,24 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 app.use(session({
-    secret: 'SECRET',
-    name: 'mysession',
-    keys: ['vueauthrandomkey'],
-    maxAge:24 * 60 * 60 * 1000
+    store: new RedisStore(),
+    name:'session',
+    cookie: { secure: false, maxAge:86400000 },
+    secret: 'sessionmaxageset'
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use((req, res, next) => {
-//     res.set("Access-Control-Allow-Credentials", "true");
-//     res.set('Access-Control-Allow-Origin', '*');
-//     res.set('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
-//     res.set('Access-Control-Allow-Headers', '*');
-//     next();
-// });
+app.use((req, res, next) => {
+    res.set('Access-Control-Allow-Credentials', 'true');
+    res.set('Access-Control-Allow-Origin', 'http://localhost:8080');
+    // res.set('Access-Control-Allow-Methods', '*');
+    res.set('Access-Control-Allow-Headers', 'X-Requested-With, accept, content-type');
+    next();
+});
 app.use(require('./routes'));
-app.use(cookieParser());
 app.use(function(err, req, res, next){
     res.status(500);
+    console.log(err)
     res.send({
         error:'error',
         text:err

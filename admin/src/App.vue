@@ -10,6 +10,7 @@
           </v-content>
           <v-footer app></v-footer>
       </div>
+      <div @click="isAuth2()">sdkjfnsjdkfnk</div>
       <router-view  v-show="!isAuth"></router-view>
   </v-app>
 </template>
@@ -35,12 +36,17 @@ export default {
         //
         }
     },
+    methods:{
+      isAuth2(){
+          this.$http.get('http://localhost:3000/user/isAuth')
+              .then((res)=>{
+                  if(res.data === false)
+                      this.$store.dispatch(AUTH_LOGOUT)
+              });
+      }
+    },
     mounted:function(){
-        this.$http.get('http://localhost:3000/user/isAuth')
-            .then((res)=>{
-                if(res.data === false)
-                    this.$store.dispatch(AUTH_LOGOUT)
-            });
+        this.isAuth2();
     }
 }
 </script>

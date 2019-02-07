@@ -18,7 +18,7 @@ class UserController{
                 return req.logIn(user, function(err){
                     return err
                         ? next(err)
-                        : res.json(req.sessionID);
+                        : res.json(req.session);
                 })
             }else{
                 return next('Не известная ошибка')

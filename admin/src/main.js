@@ -28,3 +28,7 @@ new Vue({
     store,
     render: h => h(App),
 }).$mount('#app');
+Vue.http.interceptors.push((request, next) => {
+    request.credentials = true;
+    next();
+});
