@@ -1,30 +1,3 @@
-<script>
-    export default{
-        data:()=>({
-            drawer: true,
-            items: [
-                { title: 'Раписание', icon: 'calendar_today' },
-                { title: 'Сотрудники', icon: 'accessibility_new', route:'/employees' },
-                { title: 'Услуги', icon: 'local_car_wash', route:'/services'},
-                { title: 'Должность', icon: 'local_car_wash', route:'/positions'},
-                { title: 'Автомобили', icon: 'local_car_wash', route:'/cars'},
-                { title: 'Визиты', icon: 'local_car_wash', route:'/visits'}
-            ],
-            mini: false,
-            right: null
-        }),
-        methods:{
-            toRoute(route){
-                this.$router.push(route);
-            }
-        },
-        computed:{
-            isAuth:function(){
-                return this.$store.getters.isAuthenticated
-            }
-        }
-    }
-</script>
 <template>
     <v-navigation-drawer
             :mini-variant.sync="mini"
@@ -41,7 +14,7 @@
                     </v-list-tile-avatar>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Николай Махмутов</v-list-tile-title>
+                        <v-list-tile-title>{{user.firstname}} {{user.lastname}}</v-list-tile-title>
                     </v-list-tile-content>
 
                     <v-list-tile-action>
@@ -74,3 +47,32 @@
         </v-list>
     </v-navigation-drawer>
 </template>
+<script>
+    export default{
+        data:()=>({
+            drawer: true,
+            items: [
+                { title: 'Визиты', icon: 'local_car_wash', route:'/visits'},
+                { title: 'Сотрудники', icon: 'accessibility_new', route:'/employees' },
+                { title: 'Услуги', icon: 'local_car_wash', route:'/services'},
+                { title: 'Должность', icon: 'local_car_wash', route:'/positions'},
+                { title: 'Автомобили', icon: 'local_car_wash', route:'/cars'},
+            ],
+            mini: false,
+            right: null
+        }),
+        methods:{
+            toRoute(route){
+                this.$router.push(route);
+            }
+        },
+        computed:{
+            user:function(){
+                return this.$store.getters.user
+            },
+            isAuth:function(){
+                return this.$store.getters.isAuthenticated
+            }
+        }
+    }
+</script>

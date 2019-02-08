@@ -1,15 +1,42 @@
-import { USER_REGISTER, USER_SUCCESS, USER_ERROR, USER_REQUEST } from '../actions/user.js';
+import { USER_REGISTER, USER_SUCCESS, USER_ERROR, USER_REQUEST, USER_LOGIN, USER_LOGOUT,USER_IS_LOGIN } from '../actions/user';
 import Vue from 'vue';
 const HOST = 'http://localhost:3000';
 
 export default {
     state:{
-        f:1
+        user:{}
     },
     getters:{
-
+        isAuthenticated:state => () => Object.keys(state.user).length > 0,
+        user:store=>store.user,
     },
     actions:{
+        [USER_IS_LOGIN]: ({commit}) => {
+            Vue.http.get(`${Vue.HOST}/user/isAuth`)
+                .then((res)=>{
+                    if(res.data)
+                        commit(USER_LOGIN, res.data);
+                    else
+                        commit(USER_LOGOUT);
+                });
+        },
+        [USER_LOGIN]: ({commit}, user) => {
+            return new Promise((resolve, reject) => { // The Promise used for router redirect in login
+
+                commit(USER_REQUEST);
+
+                Vue.http.post(HOST+'/user/login', JSON.stringify(user))
+                    .then(response => {
+                        if(response.data)
+                            commit(USER_LOGIN, response.data);
+                        resolve(response)
+                    })
+                    .catch(err => {
+                        commit(USER_ERROR, err.body);
+                        reject(err.body)
+                    })
+            })
+        },
         [USER_REGISTER]: ({commit}, user) => {
             return new Promise((resolve, reject) => {
                 commit(USER_REQUEST);
@@ -30,11 +57,17 @@ export default {
         }
     },
     mutations:{
+        [USER_LOGIN]: (state, user) => {
+            state.user = user;
+        },
+        [USER_LOGOUT]: (state) => {
+            delete state.user;
+        },
         [USER_REQUEST]: (state) => {
             state.status = 'loading'
         },
         [USER_SUCCESS]: (state, token) => {
-            state.status = 'success'
+            state.status = 'success';
             state.token = token
         },
         [USER_ERROR]: (state) => {

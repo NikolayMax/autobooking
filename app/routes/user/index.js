@@ -4,13 +4,11 @@ var db = require('../../db.js');
 const UserController = require('./controller');
 const passport = require('passport');
 
-module.exports = ()=>{
+module.exports = (()=>{
 
     let controller = new UserController(db);
 
-    router.post('/login', passport.authenticate('local', {session: true}),function(req, res) {
-        res.json(req.session);
-    });
+    router.post('/login', passport.authenticate('local'),controller.login.bind(controller));
     router.post('/register', controller.register.bind(controller));
     router.get('/logout', controller.logout.bind(controller));
 
@@ -24,4 +22,4 @@ module.exports = ()=>{
     }, controller.list.bind(controller));
 
     return router;
-};
+})();

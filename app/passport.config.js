@@ -4,15 +4,13 @@ const LocalStrategy = require('passport-local');
 const db = require('./db');
 
 passport.serializeUser(function(user, done) {
-    console.log('Серилизация: ', user.id);
-    done(null, user.id);
+    done(null, user);
 });
 
-passport.deserializeUser(function(id, done) {
-    console.log('Десерилизация: ', id);
-    db.query('SELECT * from auto_admin.users WHERE id = ?', [id])
+passport.deserializeUser(function(user, done){
+    db.query('SELECT * from auto_admin.users WHERE id = ?', [user.id])
         .then(function(user){
-            done(null, user);
+            done(null, user[0]);
         })
 });
 passport.use(new LocalStrategy({usernameField: 'phone'},function(phone, password, done){

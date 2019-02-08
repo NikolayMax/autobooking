@@ -11,6 +11,7 @@ import router from './router';
 import store from './store'
 
 Vue.use(VueResource);
+Vue.http.options.credentials = true;
 Vue.use(Vuetify);
 Vue.PORT = '3000';
 Vue.HOST = 'http://localhost:'+Vue.PORT;
@@ -28,7 +29,3 @@ new Vue({
     store,
     render: h => h(App),
 }).$mount('#app');
-Vue.http.interceptors.push((request, next) => {
-    request.credentials = true;
-    next();
-});

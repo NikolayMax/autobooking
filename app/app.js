@@ -14,9 +14,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 app.use(session({
     store: new RedisStore(),
-    name:'session',
     cookie: { secure: false, maxAge:86400000 },
-    secret: 'sessionmaxageset'
+    secret: 'secret'
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -40,5 +39,8 @@ app.use(function(err, req, res, next){
 app.listen(3000, function () {
     console.log('Example app listening on port 3000!');
 });
-
+process.on('unhandledRejection', function(reason, p){
+    console.log(arguments);
+    // application specific logging, throwing an error, or other logic here
+});
 module.exports = app;

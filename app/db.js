@@ -27,12 +27,11 @@ class Database {
     }
     query( sql, args ) {
         return new Promise((resolve, reject ) => {
-                var res = this.connection.query( sql, args, ( err, rows ) => {
+                this.connection.query( sql, args, ( err, rows ) => {
                     if ( err )
                         return reject( err.sqlMessage );
                     resolve( rows );
                 });
-                console.log(res.sql)
             });
     }
     close() {

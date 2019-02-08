@@ -1,6 +1,6 @@
 <template>
   <v-app>
-      <div v-show="isAuth">
+      <div v-show="isAuth()">
           <LeftMenu></LeftMenu>
           <ToolBar/>
           <v-content>
@@ -10,15 +10,14 @@
           </v-content>
           <v-footer app></v-footer>
       </div>
-      <div @click="isAuth2()">sdkjfnsjdkfnk</div>
-      <router-view  v-show="!isAuth"></router-view>
+      <router-view v-show="!isAuth()"></router-view>
   </v-app>
 </template>
 
 <script>
 import ToolBar from './components/ToolBar'
 import LeftMenu from './components/LeftMenu'
-import {AUTH_LOGOUT} from './store/actions/auth';
+import {USER_IS_LOGIN} from './store/actions/user';
 
 export default {
     name: 'App',
@@ -26,9 +25,9 @@ export default {
         ToolBar,
         LeftMenu
     },
-    computed:{
-        isAuth:function(){
-            return this.$store.getters.isAuthenticated
+    methods:{
+        isAuth(){
+            return this.$store.getters.isAuthenticated()
         }
     },
     data () {
@@ -36,17 +35,8 @@ export default {
         //
         }
     },
-    methods:{
-      isAuth2(){
-          this.$http.get('http://localhost:3000/user/isAuth')
-              .then((res)=>{
-                  if(res.data === false)
-                      this.$store.dispatch(AUTH_LOGOUT)
-              });
-      }
-    },
     mounted:function(){
-        this.isAuth2();
+        this.$store.dispatch(USER_IS_LOGIN);
     }
 }
 </script>

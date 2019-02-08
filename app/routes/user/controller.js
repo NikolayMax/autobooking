@@ -7,23 +7,10 @@ class UserController{
         this.db = db;
     }
     isAuth(req, res, next){
-        res.json(req.session);
+        res.json(req.user);
     }
     login(req, res, next){
-        passport.authenticate('local', function(err, user, info) {
-            console.log(err, user, info)
-            if(err)
-                return next(err);
-            else if(user){
-                return req.logIn(user, function(err){
-                    return err
-                        ? next(err)
-                        : res.json(req.session);
-                })
-            }else{
-                return next('Не известная ошибка')
-            }
-        })(req, res, next);
+        res.json(req.user);
     }
     register(req, res, next){
         let {lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice} = req.body;

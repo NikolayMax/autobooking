@@ -50,7 +50,7 @@
 
 <script>
 
-    import {AUTH_REQUEST, AUTH_LOGOUT} from '../store/actions/auth'
+    import {USER_LOGIN} from '../store/actions/user'
 
     export default{
         mounted() {
@@ -74,15 +74,22 @@
             },
         }),
         methods:{
+            isAuth(){
+                return this.$store.getters.isAuthenticated()
+            },
             register: function(){
               this.$router.push('/register')
+            },
+            visits: function(){
+                this.$router.push('/visits');
             },
             login: function () {
                 const { phone, password } = this;
 
-                this.$store.dispatch(AUTH_REQUEST, { phone, password })
+                this.$store.dispatch(USER_LOGIN, { phone, password })
                     .then(()=>{
-                        this.$router.push('/visits')
+                        console.log(this.$router);
+                        this.$router.push('/visits');
                     })
                     .catch(err=>{
                         if(err){

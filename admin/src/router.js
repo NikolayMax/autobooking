@@ -14,7 +14,7 @@ import store from './store';
 
 Vue.use(VueRouter);
 let isAuth = (to, from, next)=> {
-    if(store.getters.isAuthenticated){
+    if(store.getters.isAuthenticated()){
         next()
     }else{
         next('/login')
