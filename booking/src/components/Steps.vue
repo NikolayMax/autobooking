@@ -51,6 +51,15 @@
                     Записаться
                 </v-btn>
             </v-stepper-content>
+            <v-stepper-content step="4">
+                <v-card class="mb-5 minHeight" flat>
+                    <FourStep></FourStep>
+                </v-card>
+                <v-btn color="primary"
+                       @click="e1 = 1">
+                    Перейти к выбору услуг
+                </v-btn>
+            </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
 </template>
@@ -58,13 +67,16 @@
     import OneStep from './OneStep';
     import TwoStep from './TwoStep';
     import ThreeStep from './ThreeStep';
+    import FourStep from './FourStep';
+    import {SELECTED_CLEAR} from '../store/actions/selected';
     import Vue from 'vue';
 
     export default {
         components: {
             OneStep,
             TwoStep,
-            ThreeStep
+            ThreeStep,
+            FourStep
         },
         methods:{
             signUp(){
@@ -79,11 +91,18 @@
                     date,
                     time:time.title
                 })
+                    .then(response=>{
+                        this.e1=4;
+                        this.$store.dispatch(SELECTED_CLEAR);
+                    })
+                    .catch(err=>{
+                        this.$store.dispatch(SELECTED_CLEAR);
+                    })
             }
         },
         data () {
             return {
-                e1: 0
+                e1: 1
             }
         }
     }

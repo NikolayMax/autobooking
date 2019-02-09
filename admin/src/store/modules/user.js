@@ -7,7 +7,10 @@ export default {
         user:{}
     },
     getters:{
-        isAuthenticated:state => () => Object.keys(state.user).length > 0,
+        isAuthenticated:state => () => {
+            console.log(state.user);
+            return Object.keys(state.user).length > 0
+        },
         user:store=>store.user,
     },
     actions:{
@@ -58,10 +61,11 @@ export default {
     },
     mutations:{
         [USER_LOGIN]: (state, user) => {
+            Vue.ORGID = user['organization_id'];
             state.user = user;
         },
         [USER_LOGOUT]: (state) => {
-            delete state.user;
+            state.user = {};
         },
         [USER_REQUEST]: (state) => {
             state.status = 'loading'

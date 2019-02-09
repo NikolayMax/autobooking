@@ -42,14 +42,19 @@ class UserController{
                 this.db.query('INSERT INTO auto_admin.users(lastname, firstname, patronymic, password, phone, organization_id) VALUES(?, ?, ?, ?, ?, ?)',
                     [lastname, firstname, patronymic, hashPassword, phone, user['organization_id']])
             })
-            .then(()=> this.db.query('SELECT * FROM auto_admin.users WHERE password = ? AND phone = ?', [hashPassword, phone]))
-            .then(function(users){
-                let user = users[0];
-                req.logIn(user, function(err) {
-                    return err
-                        ? next(err)
-                        : res.json(user);
-                })
+            .then(()=>{
+
+                return this.db.query(`CREATE DATABASE IF NOT EXISTS auto_${user['organization_id']}`)
+            })
+            .then(results=>{
+                require('../../migration/app')
+                    .then(()=>{
+                        req.logIn(user, function(err) {
+                            return err
+                                ? next(err)
+                                : res.json(user);
+                        })
+                    });
             })
             .catch((err)=>{
                 return next(err)

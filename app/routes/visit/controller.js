@@ -77,5 +77,17 @@ class VisitController extends BaseController{
                 res.json(visits);
             })
     }
+    visitItems(req, res, next){
+        this.db.query(`SELECT * FROM auto_${req.params.orgid}.visit_item WHERE visit_id = ?`, [req.query.visitId])
+            .then(visits=>{
+                res.json(visits);
+            })
+    }
+    client(req, res, next){
+        this.db.query(`SELECT c.* FROM auto_${req.params.orgid}.visits AS v LEFT JOIN auto_${req.params.orgid}.clients AS c ON v.id_client = c.id WHERE v.id = ?`, [req.query.visitId])
+            .then(client=>{
+                res.json(client[0]);
+            })
+    }
 }
 module.exports = VisitController;

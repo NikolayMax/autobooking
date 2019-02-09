@@ -9,5 +9,6 @@ router.use('/cars', require('./cars'));
 router.use('/services-models', require('./services-models'));
 router.use('/services_employees', require('./services_employees'));
 router.use('/visit', require('./visit'));
+router.use('/booking', require('./booking'));
 
 module.exports = router;

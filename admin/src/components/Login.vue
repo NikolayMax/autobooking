@@ -1,5 +1,5 @@
 <template>
-       <v-container>
+       <v-container v-show="!isAuth()">
            <v-layout>
                <v-flex sm4 offset-sm4>
                     <v-card>

@@ -9,6 +9,8 @@ module.exports = (()=>{
 
     router.post('/:orgid', controller.isOrgid.bind(controller), controller.create.bind(controller));
     router.get('/:orgid', controller.isOrgid.bind(controller), controller.list.bind(controller));
+    router.get('/items/:orgid', controller.isOrgid.bind(controller), controller.visitItems.bind(controller));
+    router.get('/client/:orgid', controller.isOrgid.bind(controller), controller.client.bind(controller));
 
 
     return router;

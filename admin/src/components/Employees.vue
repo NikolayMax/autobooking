@@ -93,6 +93,13 @@
                 employees: [],
                 positions:[],
                 selectPosition:null,
+                lastname:'',
+                password:'',
+                email:'',
+                phone:'',
+                patronymic:'',
+                firstname:'',
+                position:null,
             }
         },
         methods:{

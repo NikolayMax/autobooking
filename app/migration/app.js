@@ -9,7 +9,7 @@ dbconfigmigration.dev.password = dbconfig.password;
 dbconfigmigration.dev.user = dbconfig.user;
 dbconfigmigration.dev.host = dbconfig.host;
 
-db.query('select * from `auto_admin`.`organizations`')
+module.exports = db.query('select * from `auto_admin`.`organizations`')
     .then(function(results){
 
         var promise = new Promise(function(res){
@@ -31,8 +31,12 @@ db.query('select * from `auto_admin`.`organizations`')
                             if(key == results.length-1 && !db.closed)
                                 db.close();
                         })
+                        .catch(function(err){
+                            console.log(err)
+                        })
             })
         });
+        return promise
     })
     .catch((err)=>{
         if(!db.closed)

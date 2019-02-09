@@ -1,4 +1,4 @@
-import { SET_SERVICE, SET_CAR, SET_MODEL, SET_DATE, SET_TIME } from '../actions/selected';
+import { SET_SERVICE, SET_CAR, SET_MODEL, SET_DATE, SET_TIME, SELECTED_CLEAR } from '../actions/selected';
 
 export default {
     state:{
@@ -31,6 +31,9 @@ export default {
         [SET_TIME]: ({commit, state}, time) => {
             commit(SET_TIME, time);
             return state.time
+        },
+        [SELECTED_CLEAR]: ({commit, state}, time) => {
+            commit(SELECTED_CLEAR);
         }
     },
     mutations:{
@@ -48,6 +51,12 @@ export default {
         },
         [SET_TIME]: (state, time) => {
             state.time = time;
+        },
+        [SELECTED_CLEAR]: (state) => {
+            state.car = {};
+            state.model = {};
+            state.services = [];
+            state.time = {};
         },
     }
 }
