@@ -10,11 +10,12 @@ module.exports = class{
             return next('Не найдена организация '+req.params.orgid);
         }
 
-        this.db.query('SELECT * FROM auto_admin.organizations WHERE organization_id = ?', [req.params.orgid])
-            .then((results)=>{
-                if(results[0])
+        this.db.query('SELECT * FROM auto_admin.organizations WHERE id = ?', [req.params.orgid])
+            .then(results=>{
+
+                if(results.length){
                     next();
-                else
+                }else
                     next('Не найдена организация '+req.params.orgid);
             })
             .catch(err=>{

@@ -1,28 +1,30 @@
 var DBMigrate = require('db-migrate');
-const db = require('../db.js');
+const path = require('path');
+const exec = require('child_process').exec;
+const db = require(path.resolve(`${__dirname}/../db.js`));
 const async = require("async");
 const fs = require('fs');
-let dbconfigmigration = require('./database');
-let dbconfig = require("../db.config.json");
+let dbconfigmigration = require(path.resolve(`${__dirname}/database`));
+let dbconfig = require(path.resolve(`${__dirname}/../db.config.json`));
+
 
 dbconfigmigration.dev.password = dbconfig.password;
 dbconfigmigration.dev.user = dbconfig.user;
 dbconfigmigration.dev.host = dbconfig.host;
 
-module.exports = db.query('select * from `auto_admin`.`organizations`')
+db.query('select * from `auto_admin`.`organizations`')
     .then(function(results){
-
         var promise = new Promise(function(res){
             res();
         });
 
         async.forEachOf(results, (value, key, callback)=>{
-            if(typeof value['organization_id'] !== 'number')
+            if(typeof value['id'] !== 'number')
                 return;
 
             promise = promise.then(()=>{
-                console.log(`\nStart migrations organization №: ${value['organization_id']}`);
-                dbconfigmigration.dev.database = `${dbconfigmigration.prefixdb}_${value['organization_id']}`;
+                console.log(`\nStart migrations organization №: ${value['id']}`);
+                dbconfigmigration.dev.database = `${dbconfigmigration.prefixdb}_${value['id']}`;
 
                 return DBMigrate
                         .getInstance(true, dbconfigmigration)
@@ -36,7 +38,6 @@ module.exports = db.query('select * from `auto_admin`.`organizations`')
                         })
             })
         });
-        return promise
     })
     .catch((err)=>{
         if(!db.closed)

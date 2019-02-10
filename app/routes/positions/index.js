@@ -7,8 +7,8 @@ module.exports = (()=>{
 
     let controller = new PositionController(db);
 
-    router.get('/:orgid', controller.isOrgid, controller.getPositions.bind(controller));
-    router.post('/:orgid', controller.isOrgid, controller.addPosition.bind(controller));
+    router.get('/:orgid', controller.isOrgid.bind(controller), controller.getPositions.bind(controller));
+    router.post('/:orgid', controller.isOrgid.bind(controller), controller.addPosition.bind(controller));
 
     return router;
 })();

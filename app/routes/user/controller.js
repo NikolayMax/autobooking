@@ -1,9 +1,13 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
+const path = require('path');
 const BCRYPT_SALT_ROUNDS = 10;
+const {exec} = require('child_process');
+const BaseController = require('../BaseController');
 
-class UserController{
+class UserController extends BaseController{
     constructor(db){
+        super();
         this.db = db;
     }
     isAuth(req, res, next){
@@ -47,14 +51,14 @@ class UserController{
                 return this.db.query(`CREATE DATABASE IF NOT EXISTS auto_${user['organization_id']}`)
             })
             .then(results=>{
-                require('../../migration/app')
-                    .then(()=>{
-                        req.logIn(user, function(err) {
-                            return err
-                                ? next(err)
-                                : res.json(user);
-                        })
-                    });
+                exec(`cd ${path.resolve(__dirname+'/../../migration')} && node app.js`, (e, stdout, stderr)=> {
+                    if (e instanceof Error) {
+                        console.error(e);
+                        next(e)
+                    }
+                    console.log(stdout);
+                    res.json(user);
+                });
             })
             .catch((err)=>{
                 return next(err)

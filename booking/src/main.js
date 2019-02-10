@@ -8,7 +8,9 @@ import store from './store'
 
 Vue.PORT = 3000;
 Vue.HOST = `http://localhost:${Vue.PORT}`;
-Vue.ORGID = `1`;
+let urlParams = new URLSearchParams(window.location.search);
+
+Vue.ORGID = urlParams.get('orgid');
 Vue.use(VueResource);
 Vue.use(Vuetify);
 

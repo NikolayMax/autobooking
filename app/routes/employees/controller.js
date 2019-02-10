@@ -26,14 +26,7 @@ class EmployeesController extends BaseController{
             params = [req.query.serviceIds];
         }
 
-       this.db.query('SELECT * FROM auto_admin.organizations WHERE organization_id = ?', [req.params.orgid])
-            .then((results)=>{
-
-                if(results.length)
-                    return this.db.query(sql, params);
-                else
-                    return new Promise((res, rej) => rej('Не найдена организация '+req.params.orgid));
-            })
+        this.db.query(sql, params)
             .then(results => res.json(results))
             .catch(err => next(err));
     }
