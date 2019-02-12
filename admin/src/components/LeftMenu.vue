@@ -52,11 +52,12 @@
         data:()=>({
             drawer: true,
             items: [
-                { title: 'Визиты', icon: 'local_car_wash', route:'/visits'},
-                { title: 'Сотрудники', icon: 'accessibility_new', route:'/employees' },
-                { title: 'Услуги', icon: 'local_car_wash', route:'/services'},
-                { title: 'Должность', icon: 'local_car_wash', route:'/positions'},
+                { title: 'Визиты', icon: 'event', route:'/visits'},
+                { title: 'Сотрудники', icon: 'people', route:'/employees' },
+                { title: 'Услуги', icon: 'apps', route:'/services'},
+                { title: 'Должность', icon: 'star', route:'/positions'},
                 { title: 'Автомобили', icon: 'local_car_wash', route:'/cars'},
+                { title: 'Онлайн Запись 2.0', icon: 'event_available', route:'/booking'},
             ],
             mini: false,
             right: null

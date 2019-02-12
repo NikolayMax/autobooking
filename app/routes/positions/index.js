@@ -9,6 +9,7 @@ module.exports = (()=>{
 
     router.get('/:orgid', controller.isOrgid.bind(controller), controller.getPositions.bind(controller));
     router.post('/:orgid', controller.isOrgid.bind(controller), controller.addPosition.bind(controller));
+    router.delete('/:orgid/:id', controller.isOrgid.bind(controller), controller.delete.bind(controller));
 
     return router;
 })();

@@ -35,6 +35,13 @@ class CarsController extends BaseController{
             .then(result=>res.json(result))
             .catch(err => next(err));
     }
+    delete(req, res, next){
+        let {id} = req.params;
+
+        this.db.query(`DELETE FROM auto_${req.params.orgid}.cars WHERE id = ?`, [id])
+            .then(results => res.json(results))
+            .catch(err => next(err));
+    }
 
 }
 module.exports = CarsController;

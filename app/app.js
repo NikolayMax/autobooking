@@ -22,7 +22,7 @@ app.use(passport.session());
 app.use((req, res, next) => {
     res.set('Access-Control-Allow-Credentials', 'true');
     res.set('Access-Control-Allow-Origin', 'http://localhost:8080');
-    // res.set('Access-Control-Allow-Methods', '*');
+    res.set('Access-Control-Allow-Methods', 'DELETE');
     res.set('Access-Control-Allow-Headers', 'X-Requested-With, accept, content-type');
     next();
 });

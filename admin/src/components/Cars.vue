@@ -9,6 +9,11 @@
                     :items="cars"
                     :search="search">
                 <template slot="items" slot-scope="props">
+                    <td>
+                        <v-btn flat icon color="pink" @click="deleteCar(props.item.id)">
+                            <v-icon>delete</v-icon>
+                        </v-btn>
+                    </td>
                     <td>{{ props.item.name }}</td>
                 </template>
             </v-data-table>
@@ -64,6 +69,7 @@
                 dialog:false,
                 search: '',
                 headers: [
+                    { text: '#', value: 'items' },
                     {
                         text: 'Название',
                         align: 'left',
@@ -97,6 +103,17 @@
                     })
                     .then(response=>this.cars = response.data)
                     .catch(err=>console.log(err))
+            },
+            deleteCar(id){
+                this.$http.delete(`${Vue.HOST}/cars/${Vue.ORGID}/${id}`)
+                    .then(()=>{
+                        this.getCars()
+                            .then(response=>{
+                                this.cars = response.data;
+                            })
+                            .catch(err=>console.log(err))
+                    })
+                    .catch(err=>console.log(err));
             }
         },
         mounted(){

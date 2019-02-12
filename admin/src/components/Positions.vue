@@ -9,6 +9,11 @@
                     :items="positions"
                     :search="search">
                 <template slot="items" slot-scope="props">
+                    <td>
+                        <v-btn flat icon color="pink" @click="deletePosition(props.item.id)">
+                            <v-icon>delete</v-icon>
+                        </v-btn>
+                    </td>
                     <td>{{ props.item.name }}</td>
                     <td>{{ props.item.comment }}</td>
                 </template>
@@ -58,6 +63,7 @@
                 dialog:false,
                 search: '',
                 headers: [
+                    { text: '#', value: 'items' },
                     {
                         text: 'Должность',
                         align: 'left',
@@ -81,6 +87,7 @@
                                 this.positions = response.data;
                             })
                             .catch(err=>console.log(err))
+                        this.dialog=false;
                     })
                     .catch(err=>{
                         console.log(err);
@@ -88,6 +95,17 @@
             },
             getPositions(){
                 return this.$http.get(`${Vue.HOST}/positions/${Vue.ORGID}`);
+            },
+            deletePosition(id){
+                this.$http.delete(`${Vue.HOST}/positions/${Vue.ORGID}/${id}`)
+                    .then(()=>{
+                        this.getPositions()
+                            .then(response=>{
+                                this.positions = response.data;
+                            })
+                            .catch(err=>console.log(err))
+                    })
+                    .catch(err=>console.log(err));
             }
         },
         mounted(){
