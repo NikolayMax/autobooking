@@ -42,6 +42,9 @@ export default {
                     })
             })
         },
+        [USER_LOGOUT]: ({commit}) => {
+            commit(USER_LOGOUT);
+        },
         [USER_REGISTER]: ({commit}, user) => {
             return new Promise((resolve, reject) => {
                 commit(USER_REQUEST);

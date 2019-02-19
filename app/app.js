@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 app.use(session({
     store: new RedisStore(),
-    cookie: { secure: false, maxAge:86400000 },
+    cookie: { secure: false, maxAge:86400000, httpOnly: false },
     secret: 'secret'
 }));
 app.use(passport.initialize());

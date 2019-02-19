@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import VueResource from 'vue-resource'
 import moment from 'moment';
+import VueCookie from 'vue-cookie';
+
 
 import './plugins/vuetify'
 import 'vuetify/dist/vuetify.min.css'
@@ -13,6 +15,7 @@ import store from './store'
 Vue.use(VueResource);
 Vue.http.options.credentials = true;
 Vue.use(Vuetify);
+Vue.use(VueCookie);
 Vue.PORT = '3000';
 Vue.HOST = 'http://'+location.hostname+':'+Vue.PORT;
 Vue.ORGID = 1;
