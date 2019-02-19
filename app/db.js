@@ -1,7 +1,11 @@
 var mysql = require('mysql');
 const mysqlUtilities = require('mysql-utilities');
 var config = require("./db.config");
-
+let pass = {
+    'development':'123',
+    'production':'VzLuU3xNrbWJtku'
+};
+config.password = pass[process.env.NODE_ENV];
 class Database {
     constructor( config ) {
 
