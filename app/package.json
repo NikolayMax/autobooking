@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "prod": "NODE_ENV=production node app.js",
+    "dev": "NODE_ENV=development supervisor app.js"
   },
   "dependencies": {
     "@sentry/node": "^4.4.2",

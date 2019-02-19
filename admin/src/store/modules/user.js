@@ -28,7 +28,9 @@ export default {
 
                 commit(USER_REQUEST);
 
-                Vue.http.post(HOST+'/user/login', JSON.stringify(user))
+                console.log(Vue.HOST);
+
+                Vue.http.post(Vue.HOST+'/user/login', JSON.stringify(user))
                     .then(response => {
                         if(response.data)
                             commit(USER_LOGIN, response.data);
@@ -44,7 +46,7 @@ export default {
             return new Promise((resolve, reject) => {
                 commit(USER_REQUEST);
 
-                Vue.http.post(HOST+'/user/register', user)
+                Vue.http.post(Vue.HOST+'/user/register', user)
                     .then((response)=>{
                         const token = response.data.token;
                         localStorage.setItem('user-token', token);

@@ -48,7 +48,7 @@ class UserController extends BaseController{
             })
             .then(()=>{
 
-                return this.db.query(`CREATE DATABASE IF NOT EXISTS auto_${user['organization_id']}`)
+                return this.db.query(`CREATE DATABASE IF NOT EXISTS auto_${user['organization_id']} CHARACTER SET utf8 COLLATE utf8_general_ci`)
             })
             .then(results=>{
                 exec(`cd ${path.resolve(__dirname+'/../../migration')} && node app.js`, (e, stdout, stderr)=> {

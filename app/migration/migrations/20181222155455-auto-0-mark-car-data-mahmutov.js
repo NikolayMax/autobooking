@@ -1,5 +1,4 @@
 'use strict';
-let async = require("async");
 var dbm;
 var type;
 var seed;
@@ -16,11 +15,18 @@ exports.setup = function(options, seedLink) {
 const marks = ['Lada', 'Audi', 'BMW', 'Ford', 'Hyundai', 'Kia', 'Mercedes-Benz', 'Mitsubishi', 'Toyota', 'Volkswagen'];
 exports.up = function (db, callback)
 {
-    let arr = [];
-    async.forEachOf(marks, function(value, key){
-        arr.push(db.insert.bind(db,'cars', ['name'], [value]));
+    let promises = [];
+    marks.forEach(value=>{
+        promises.push(db.insert('cars', ['name'], [value]))
     });
-    async.series(arr, callback);
+    Promise.all(promises)
+         .then(function(res){
+             callback();
+         })
+        .catch(function(err){
+            console.log(err);
+            callback();
+        });
 };
 
 //with options object

@@ -30,7 +30,7 @@
         computed:{
             link:{
                 get(){
-                    return `${Vue.HOST}/bookign/bookign?orgid=${Vue.ORGID}`;
+                    return `${Vue.HOST.replace(/:\d+/g, '')}/bookign/bookign?orgid=${Vue.ORGID}`;
                 }
             }
         }

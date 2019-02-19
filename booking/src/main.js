@@ -7,7 +7,7 @@ import VueResource from 'vue-resource';
 import store from './store'
 
 Vue.PORT = 3000;
-Vue.HOST = `http://localhost:${Vue.PORT}`;
+Vue.HOST = `http://${location.hostname}:${Vue.PORT}`;
 let urlParams = new URLSearchParams(window.location.search);
 
 Vue.ORGID = urlParams.get('orgid');

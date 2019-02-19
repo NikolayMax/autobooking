@@ -31,8 +31,9 @@
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field
-                                            label="Продолжительность"
+                                            label="Продолжительность чч:мм"
                                             v-model="duration"
+                                            mask="##:##"
                                             persistent-hint
                                             required
                                     ></v-text-field>

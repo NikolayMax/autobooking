@@ -14,7 +14,7 @@ Vue.use(VueResource);
 Vue.http.options.credentials = true;
 Vue.use(Vuetify);
 Vue.PORT = '3000';
-Vue.HOST = 'http://localhost:'+Vue.PORT;
+Vue.HOST = 'http://'+location.hostname+':'+Vue.PORT;
 Vue.ORGID = 1;
 
 Vue.config.productionTip = false;

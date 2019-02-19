@@ -19,9 +19,13 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+let hosts = {
+    'development':'http://localhost:8080',
+    'production':'http://185.41.163.159'
+};
 app.use((req, res, next) => {
     res.set('Access-Control-Allow-Credentials', 'true');
-    res.set('Access-Control-Allow-Origin', 'http://localhost:8080');
+    res.set('Access-Control-Allow-Origin', hosts[process.env.NODE_ENV]);
     res.set('Access-Control-Allow-Methods', 'DELETE');
     res.set('Access-Control-Allow-Headers', 'X-Requested-With, accept, content-type');
     next();
