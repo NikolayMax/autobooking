@@ -13,6 +13,9 @@
                         <v-btn flat icon color="pink" @click="deleteCar(props.item.id)">
                             <v-icon>delete</v-icon>
                         </v-btn>
+                        <v-btn flat icon color="pink" @click="changeCar(props.item)">
+                            <v-icon>create</v-icon>
+                        </v-btn>
                     </td>
                     <td>{{ props.item.name }}</td>
                 </template>
@@ -50,7 +53,7 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" flat @click="dialog = false">Закрыть</v-btn>
+                        <v-btn color="blue darken-1" flat @click="close()">Закрыть</v-btn>
                         <v-btn color="blue darken-1" flat @click="saveCar()">Сохранить</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -76,12 +79,29 @@
                         value: 'name'
                     },
                 ],
+                id:null,
                 cars: [],
                 marks:[{name:null}],
                 name:null
             }
         },
         methods:{
+            show(){
+                this.dialog = true;
+                this.menthod='post';
+            },
+            close(){
+                this.dialog = false;
+                this.name = null;
+                this.marks = [{name:null}];
+            },
+            changeCar(car){
+                this.dialog=true;
+                this.name = car.name;
+                this.marks = car.marks;
+                this.id = car.id;
+                this.menthod='put';
+            },
             deleteMark(mark, index){
                 delete this.marks.splice(index, 1);
             },
@@ -92,10 +112,10 @@
                 return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`)
             },
             saveCar(){
-                let {name, marks} = this;
+                let {name, marks, id} = this;
                 marks = marks.map(item=>item['name']);
 
-                this.$http.post(`${Vue.HOST}/cars/${Vue.ORGID}`, {name, marks})
+                this.$http[this.menthod](`${Vue.HOST}/cars/${Vue.ORGID}`, {name, marks, id})
                     .then(res=>{
                         console.log(res);
                         this.dialog=false;

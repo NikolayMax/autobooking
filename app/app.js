@@ -26,7 +26,7 @@ let hosts = {
 app.use((req, res, next) => {
     res.set('Access-Control-Allow-Credentials', 'true');
     res.set('Access-Control-Allow-Origin', hosts[process.env.NODE_ENV]);
-    res.set('Access-Control-Allow-Methods', 'DELETE');
+    res.set('Access-Control-Allow-Methods', 'DELETE,PUT');
     res.set('Access-Control-Allow-Headers', 'X-Requested-With, accept, content-type');
     next();
 });

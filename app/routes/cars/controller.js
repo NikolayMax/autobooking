@@ -35,6 +35,18 @@ class CarsController extends BaseController{
             .then(result=>res.json(result))
             .catch(err => next(err));
     }
+    changeCar(req, res, next){
+        let {name, id, marks} = req.body;
+
+        this.db.query(`UPDATE auto_${req.params.orgid}.cars SET name = ? WHERE id = ?`, [name, id])
+            .then(result =>{
+                let maps = marks.map(item=> [item, result.insertId]);
+
+                return this.db.query(`UPDATE auto_${req.params.orgid}.models SET name = ? WHERE id = ?`, [maps]);
+            })
+            .then(result=>res.json(result))
+            .catch(err => next(err));
+    }
     delete(req, res, next){
         let {id} = req.params;
 

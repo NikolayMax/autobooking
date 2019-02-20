@@ -17,9 +17,16 @@ class PositionController extends BaseController{
             .then(results => res.status(200).send(results))
             .catch(err => next(err));
     }
+    changePosition(req, res, next){
+        let {name, comment, id} = req.body;
+        console.log(name, comment, id)
+
+        this.db.query(`UPDATE auto_${req.params.orgid}.positions SET name = ?, comment = ? WHERE id = ?`, [name, comment, id])
+            .then(results => res.status(200).send(results))
+            .catch(err => next(err));
+    }
     delete(req, res, next){
         let {id} = req.params;
-
 
         this.db.query(`DELETE FROM auto_${req.params.orgid}.positions WHERE id = ?`, [id])
             .then(results => res.json(results))

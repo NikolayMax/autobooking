@@ -2,7 +2,7 @@
     <div>
         <v-card>
             <div class="px-3 pt-3">
-                <v-btn small color="success" @click="dialog=true">Добавить</v-btn>
+                <v-btn small color="success" @click="show()">Добавить</v-btn>
             </div>
             <v-data-table
                     :headers="headers"
@@ -12,6 +12,9 @@
                     <td>
                         <v-btn flat icon color="pink" @click="deletePosition(props.item.id)">
                             <v-icon>delete</v-icon>
+                        </v-btn>
+                        <v-btn flat icon color="pink" @click="changePosition(props.item)">
+                            <v-icon>create</v-icon>
                         </v-btn>
                     </td>
                     <td>{{ props.item.name }}</td>
@@ -44,7 +47,7 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" flat @click="dialog = false">Закрыть</v-btn>
+                        <v-btn color="blue darken-1" flat @click="close()">Закрыть</v-btn>
                         <v-btn color="blue darken-1" flat @click="save()">Сохранить</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -71,16 +74,26 @@
                     },
                     { text: 'Комментарий', value: 'comment' },
                 ],
+                id:null,
                 name: null,
                 comment:null,
                 positions:[]
             }
         },
         methods:{
+            show(){
+                this.menthod='post';
+                this.dialog=true;
+            },
+            close(){
+                this.dialog=false;
+                this.name=null;
+                this.comment=null;
+            },
             save(){
-                let {name, comment} = this;
+                let {name, comment, id} = this;
                 console.log(this);
-                this.$http.post(`${Vue.HOST}/positions/${Vue.ORGID}`, {name, comment})
+                this.$http[this.menthod](`${Vue.HOST}/positions/${Vue.ORGID}`, {name, comment, id})
                     .then(()=>{
                         this.getPositions()
                             .then(response=>{
@@ -88,10 +101,19 @@
                             })
                             .catch(err=>console.log(err))
                         this.dialog=false;
+                        this.name = null;
+                        this.comment = null;
                     })
                     .catch(err=>{
                         console.log(err);
                     })
+            },
+            changePosition(position){
+                this.dialog = true;
+                this.name = position.name;
+                this.comment = position.comment;
+                this.id = position.id;
+                this.menthod='put';
             },
             getPositions(){
                 return this.$http.get(`${Vue.HOST}/positions/${Vue.ORGID}`);

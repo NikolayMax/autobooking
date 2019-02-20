@@ -1,5 +1,7 @@
 {
   "dev": {
+    "user":"root",
+    "password":"123",
     "driver": "mysql",
     "database": "auto_admin"
   },
