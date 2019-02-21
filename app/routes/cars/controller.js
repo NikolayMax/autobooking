@@ -28,7 +28,7 @@ class CarsController extends BaseController{
 
         this.db.query(`INSERT INTO auto_${req.params.orgid}.cars(name) VALUE(?)`, [name])
             .then(result =>{
-                let maps = marks.map(item=> [item, result.insertId]);
+                let maps = marks.map(item=> [item['name'], result.insertId]);
 
                 return this.db.query(`INSERT INTO auto_${req.params.orgid}.models(name, id_mark) VALUES ?`, [maps]);
             })
@@ -38,11 +38,20 @@ class CarsController extends BaseController{
     changeCar(req, res, next){
         let {name, id, marks} = req.body;
 
+        console.log(name, id, marks);
+
         this.db.query(`UPDATE auto_${req.params.orgid}.cars SET name = ? WHERE id = ?`, [name, id])
             .then(result =>{
                 let maps = marks.map(item=> [item, result.insertId]);
 
-                return this.db.query(`UPDATE auto_${req.params.orgid}.models SET name = ? WHERE id = ?`, [maps]);
+                return Promise.all(marks.map(mark=>{
+                    if(mark.id && mark.deleted)
+                        return this.db.query(`DELETE FROM auto_${req.params.orgid}.models WHERE id = ?`, [mark.id]);
+                    else if(mark.id && !mark.deleted)
+                        return this.db.query(`UPDATE auto_${req.params.orgid}.models SET name = ? WHERE id = ?`, [mark.name, mark.id]);
+                    else if(!mark.id && !mark.deleted)
+                        return this.db.query(`INSERT INTO auto_${req.params.orgid}.models(name, id_mark) VALUES(?, ?)`, [mark.name, id]);
+                }));
             })
             .then(result=>res.json(result))
             .catch(err => next(err));
@@ -51,6 +60,7 @@ class CarsController extends BaseController{
         let {id} = req.params;
 
         this.db.query(`DELETE FROM auto_${req.params.orgid}.cars WHERE id = ?`, [id])
+            .then(results=>this.db.query(`DELETE FROM auto_${req.params.orgid}.models WHERE id_mark = ?`, [id]))
             .then(results => res.json(results))
             .catch(err => next(err));
     }

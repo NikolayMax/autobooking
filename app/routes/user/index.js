@@ -8,7 +8,7 @@ module.exports = (()=>{
 
     let controller = new UserController(db);
 
-    router.post('/login', passport.authenticate('local'),controller.login.bind(controller));
+    router.post('/login', passport.authenticate('local'), controller.login.bind(controller));
     router.post('/register', controller.register.bind(controller));
     router.get('/logout', controller.logout.bind(controller));
 

@@ -14,6 +14,7 @@
                             <v-layout row>
                                 <v-text-field
                                     label="Телефон"
+                                    mask="7(###) ### - ####"
                                     v-model="phone"
                                     :error-messages="checkError('phone')"
                                     ></v-text-field>

@@ -18,6 +18,7 @@ class UserController extends BaseController{
     }
     register(req, res, next){
         let {lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice} = req.body;
+
         phone = phone.replace(/[^0-9]/g,'');
         let user, hashPassword;
 
@@ -47,7 +48,7 @@ class UserController extends BaseController{
                     [lastname, firstname, patronymic, hashPassword, phone, user['organization_id']])
             })
             .then(()=>{
-
+                console.log(123123123)
                 return this.db.query(`CREATE DATABASE IF NOT EXISTS auto_${user['organization_id']} CHARACTER SET utf8 COLLATE utf8_general_ci`)
             })
             .then(results=>{

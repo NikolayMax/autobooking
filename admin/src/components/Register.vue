@@ -132,7 +132,7 @@
                         }
                     })
                     .finally(()=>{
-                        this.showProgress=true;
+                        this.showProgress=false;
                     })
             }
         }

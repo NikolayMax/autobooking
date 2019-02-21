@@ -2,7 +2,7 @@
     <div>
         <v-card>
             <div class="px-3 pt-3">
-                <v-btn small color="success" @click="dialog=true">Добавить</v-btn>
+                <v-btn small color="success" @click="show()">Добавить</v-btn>
             </div>
             <v-data-table
                     :headers="headers"
@@ -22,10 +22,10 @@
             </v-data-table>
         </v-card>
         <v-layout row justify-center>
-            <v-dialog v-model="dialog" persistent max-width="600px">
+            <v-dialog v-model="dialog.show" persistent max-width="600px">
                 <v-card>
                     <v-card-title>
-                        <span class="headline">Добавить автомобиль</span>
+                        <span class="headline">{{dialog.title}}</span>
                     </v-card-title>
                     <v-card-text>
                         <v-container grid-list-md>
@@ -33,7 +33,7 @@
                                 <v-flex xs12>
                                     <v-text-field label="Нзвание" required v-model="name"></v-text-field>
                                 </v-flex>
-                                <v-layout row v-for="(mark, index) in marks" :key="index">
+                                <v-layout row v-for="(mark, index) in marks" :key="index" v-show="mark.show">
                                     <v-flex xs10>
                                         <v-text-field label="Нзвание марки*" v-model="mark.name"></v-text-field>
                                     </v-flex>
@@ -69,7 +69,10 @@
         name: "Cars",
         data () {
             return {
-                dialog:false,
+                dialog:{
+                    title:'Добавить автомобиль',
+                    show:false
+                },
                 search: '',
                 headers: [
                     { text: '#', value: 'items' },
@@ -81,44 +84,55 @@
                 ],
                 id:null,
                 cars: [],
-                marks:[{name:null}],
+                marks:[{name:null, show:true}],
                 name:null
             }
         },
         methods:{
             show(){
-                this.dialog = true;
+                this.dialog.show = true;
                 this.menthod='post';
             },
             close(){
-                this.dialog = false;
+                this.dialog.show = false;
                 this.name = null;
                 this.marks = [{name:null}];
             },
             changeCar(car){
-                this.dialog=true;
+                this.dialog.show=true;
+                this.dialog.title="Изменить автомобиль";
                 this.name = car.name;
-                this.marks = car.marks;
+
+                if(car.models)
+                    this.marks = car.models;
+
                 this.id = car.id;
                 this.menthod='put';
             },
             deleteMark(mark, index){
-                delete this.marks.splice(index, 1);
+                mark.show=false;
+                mark.deleted=true;
             },
             addMark(){
-                  this.marks.push({name:null});
+                this.marks.push({name:null, show:true});
             },
             getCars(){
-                return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`)
+                return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`).then(response=>{
+                    response.data.forEach(car=>{
+                        car.models.forEach(model=>{
+                            model.show=true;
+                        })
+                    });
+                    return Promise.resolve(response);
+                })
             },
             saveCar(){
                 let {name, marks, id} = this;
-                marks = marks.map(item=>item['name']);
+                console.log(name, marks, id)
 
                 this.$http[this.menthod](`${Vue.HOST}/cars/${Vue.ORGID}`, {name, marks, id})
                     .then(res=>{
-                        console.log(res);
-                        this.dialog=false;
+                        this.dialog.show=false;
                         return this.getCars()
                     })
                     .then(response=>this.cars = response.data)

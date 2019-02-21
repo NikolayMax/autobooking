@@ -14,32 +14,27 @@ dbconfigmigration.dev.host = dbconfig.host;
 
 db.query('select * from `auto_admin`.`organizations`')
     .then(function(results){
-        var promise = new Promise(function(res){
-            res();
-        });
+        var promises = [];
 
-        async.forEachOf(results, (value, key, callback)=>{
+        results.forEach(value=>{
             if(typeof value['id'] !== 'number')
                 return;
 
-            promise = promise.then(()=>{
-                console.log(`\nStart migrations organization №: ${value['id']}`);
-                dbconfigmigration.dev.database = `${dbconfigmigration.prefixdb}_${value['id']}`;
+            dbconfigmigration.dev.database = `${dbconfigmigration.prefixdb}_${value['id']}`;
 
-                return DBMigrate
-                        .getInstance(true, dbconfigmigration)
-                        .up()
-                        .then(function(){
-                            if(key == results.length-1 && !db.closed)
-                                db.close();
-                        })
-                        .catch(function(err){
-                            console.log(err)
-                        })
-            })
+            promises.push(DBMigrate.getInstance(true, dbconfigmigration).up().then(res=>{
+                console.log(`\nEnd migrations organization №: ${value['id']}`);
+            }))
         });
+
+        return Promise.all(promises);
+    })
+    .then(function(){
+        if(!db.closed)
+            db.close();
     })
     .catch((err)=>{
+        console.log(err);
         if(!db.closed)
             db.close();
     });
