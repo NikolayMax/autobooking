@@ -1,0 +1,11 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "dependencies": {
+    
+  },
+  "scripts":{
+    "dev": "NODE_ENV=development node app.js",
+    "prod": "NODE_ENV=production node app.js"
+  }
+}

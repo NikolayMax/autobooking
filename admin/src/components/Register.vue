@@ -1,6 +1,7 @@
 <template>
     <v-container>
-        <v-layout>
+        <v-layout style="position: relative;">
+            <v-progress-linear class="v-progress-linear" height="2" value="15" :indeterminate="true" v-show="showProgress"></v-progress-linear>
             <v-flex>
                 <v-card style="position: relative;">
                     <v-btn
@@ -103,6 +104,7 @@
                 phone:'',
                 error:null,
                 showPassword: false,
+                showProgress:false,
                 rules: {
                     confirmPassword: v => data.comfirmPassword === data.password || 'Пароли не совподают',
                     min: v => v.length >= 6 || 'Минимально 6 символов',
@@ -118,6 +120,7 @@
                 const { lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice } = this;
 
                 console.log(USER_REGISTER);
+                this.showProgress=true;
                 this.$store.dispatch(USER_REGISTER, { lastname, firstname, patronymic, password, comfirmPassword, phone, nameAutoservice })
                     .then(()=>{
                         this.$router.push('/login')
@@ -128,8 +131,18 @@
                             setTimeout(()=>{this.error=null}, 5000)
                         }
                     })
+                    .finally(()=>{
+                        this.showProgress=true;
+                    })
             }
         }
     }
 
 </script>
+<style scoped>
+    .v-progress-linear{
+        position: absolute;
+        top: 0px;
+        margin: 0px;
+    }
+</style>

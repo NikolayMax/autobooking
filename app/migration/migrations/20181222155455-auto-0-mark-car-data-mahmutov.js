@@ -17,7 +17,7 @@ exports.up = function (db, callback)
 {
     let promises = [];
     marks.forEach(value=>{
-        promises.push(db.insert('cars', ['name'], [value]))
+        promises.push(db.insert('cars', ['name'], [value], ()=>{}))
     });
     Promise.all(promises)
          .then(function(res){
