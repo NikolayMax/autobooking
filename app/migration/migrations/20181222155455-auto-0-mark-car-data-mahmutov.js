@@ -12,15 +12,60 @@ exports.setup = function(options, seedLink) {
   type = dbm.dataType;
   seed = seedLink;
 };
-const marks = ['Lada', 'Audi', 'BMW', 'Ford', 'Hyundai', 'Kia', 'Mercedes-Benz', 'Mitsubishi', 'Toyota', 'Volkswagen'];
+const marks = [{
+    name:'Lada',
+    models:[
+        {name:'Granta'},
+        {name:'Vesta'},
+        {name:'XRAY'},
+        {name:'Largus'},
+        {name:'Niva 4x4'},
+    ]
+},
+    {
+        name:'Ford',
+        models:[
+            {name:'Focus'},
+            {name:'Mondeo'},
+            {name:'Kuga'},
+        ]
+    }, {
+        name:'Hyundai',
+        models:[
+            {name:'Solaris'},
+            {name:'Elantra'},
+            {name:'Sonata'},
+        ]
+    }, {
+        name:'Kia',
+        models:[
+            {name:'Rio'},
+            {name:'Ceed'},
+            {name:'Sorento'},
+        ]
+    }, {
+        name:'Volkswagen',
+        models:[
+            {name:'Polo'},
+            {name:'Golf'},
+            {name:'Passat'},
+        ]
+    }];
 exports.up = function (db, callback)
 {
     let promises = [];
     marks.forEach(value=>{
-        promises.push(db.insert('cars', ['name'], [value], ()=>{}))
+        promises.push(db.insert('cars', ['name'], [value.name], ()=>{}).then(row=>{
+            let promises = [];
+
+            value.models.forEach(model=>{
+                promises.push(db.insert('models', ['name', 'id_car'], [model.name, row.insertId], ()=>{}));
+            });
+            return Promise.all(promises);
+        }))
     });
     Promise.all(promises)
-         .then(function(res){
+        .then(function(res){
              callback();
          })
         .catch(function(err){

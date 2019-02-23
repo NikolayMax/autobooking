@@ -2,12 +2,20 @@
     <div>
         <v-card>
             <div class="px-3 pt-3">
-                <v-btn small color="success" @click="dialog=true">Добавить</v-btn>
+                <v-btn small color="success" @click="show()">Добавить</v-btn>
             </div>
             <v-data-table
                     :headers="headers"
                     :items="services">
                 <template slot="items" slot-scope="props">
+                    <td>
+                        <v-btn flat icon color="pink" @click="deleteService(props.item.id)">
+                            <v-icon>delete</v-icon>
+                        </v-btn>
+                        <v-btn flat icon color="pink" @click="changeService(props.item)">
+                            <v-icon>create</v-icon>
+                        </v-btn>
+                    </td>
                     <td>{{ props.item.name }}</td>
                     <td>{{ props.item.duration }}</td>
                     <td>{{ props.item.price }}</td>
@@ -60,6 +68,8 @@
                                     <v-treeview
                                             v-model="selectedCars"
                                             :items="cars"
+                                            return-object
+                                            item-key="key"
                                             item-text="name"
                                             item-children="models"
                                             multiple-active
@@ -72,7 +82,7 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" flat @click="dialog = false">Закрыть</v-btn>
+                        <v-btn color="blue darken-1" flat @click="close()">Закрыть</v-btn>
                         <v-btn color="blue darken-1" flat @click="saveService()">Сохранить</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -91,6 +101,7 @@
                 dialog:false,
                 search: '',
                 headers: [
+                    { text: '#', value: 'settings' },
                     {
                         text: 'Название',
                         align: 'left',
@@ -102,6 +113,7 @@
                 services: [],
                 employees:[],
                 cars:[],
+                method:'post',
                 selectedCars: [],
                 selectedEmployees:[],
                 tree:[],
@@ -112,6 +124,18 @@
         },
         methods:{
             getNameEmployee:item => `${item.lastname} ${item.firstname} ${item.patronymic}`,
+            show(){
+                this.method = 'post';
+                this.dialog = true;
+            },
+            close(){
+                this.dialog = false;
+                this.name = '';
+                this.price = '';
+                this.duration = '';
+                this.selectedEmployees = [];
+                this.selectedCars = [];
+            },
             toggle () {
                 this.$nextTick(() => {
                     if (this.allEmployees) {
@@ -120,6 +144,17 @@
                         this.selectedEmployees = this.employees.slice()
                     }
                 })
+            },
+            deleteService(id){
+                this.$http.delete(`${Vue.HOST}/services/${Vue.ORGID}/${id}`)
+                    .then(()=>{
+                        this.dialog=false;
+                        return this.getServices();
+                    })
+                    .then(response=>{
+                        this.services = response.data;
+                    })
+                    .catch(err=>console.log(err));
             },
             getServices(){
                 return this.$http.get(`${Vue.HOST}/services/${Vue.ORGID}`)
@@ -130,21 +165,47 @@
             getCars(){
                 return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`)
             },
+            changeService(service){
+                console.log(service)
+
+                this.dialog = true;
+                this.name = service.name;
+                this.price = service.price;
+                this.duration = service.duration;
+                this.selectedEmployees = service.employees;
+                this.method = 'put';
+                let models = [];
+                this.cars.forEach(car =>{
+                    models = models.concat(car.models)
+                });
+                this.selectedCars = service.models.map(model => models.find(mdl => mdl.id == model.id));
+                console.log(this.selectedCars)
+            },
             saveService(){
-                let {name, duration, price, selectedCars, selectedEmployees} = this,
+                let {name, duration, price, selectedCars, selectedEmployees, id, method} = this,
                 serviceId=null;
 
-                selectedCars = selectedCars.map(car=>car);
+                let modelsIds = {};
+                selectedCars.forEach(car=>{
+                    if(car.models && car.models.length)
+                        car.models.forEach(model=>{
+                            modelsIds[model.id] = true;
+                        });
+                    else
+                        modelsIds[car.id] = true;
+                });
+                selectedCars = Object.keys(modelsIds);
+
                 selectedEmployees = selectedEmployees.map(employee=>employee.id);
 
-                this.$http.post(`${Vue.HOST}/services/${Vue.ORGID}`, {name, duration, price})
+                this.$http[this.method](`${Vue.HOST}/services/${Vue.ORGID}`, {name, duration, price, id})
                     .then((response)=>{
                         this.dialog=false;
                         serviceId = response.data.insertId;
 
-                        return this.$http.post(`${Vue.HOST}/services-models/${Vue.ORGID}`, {serviceId:serviceId, models:selectedCars})
+                        return this.$http[this.method](`${Vue.HOST}/services-models/${Vue.ORGID}`, {serviceId:serviceId, models:selectedCars})
                     })
-                    .then(response=>this.$http.post(`${Vue.HOST}/services_employees/${Vue.ORGID}`, {serviceId:serviceId, employees:selectedEmployees}))
+                    .then(response=>this.$http[this.method](`${Vue.HOST}/services_employees/${Vue.ORGID}`, {serviceId:serviceId, employees:selectedEmployees}))
                     .then(response=>this.getServices())
                     .then(response=>{
                         this.services = response.data;
@@ -166,6 +227,14 @@
                 })
                 .then(response=>{
                     let cars = response.data;
+
+                    let index=0;
+                    cars.forEach(car=>{
+                        car.key = index++;
+                        car.models.forEach(model=>{
+                            model.key = index++;
+                        })
+                    });
 
                     this.cars = cars;
 

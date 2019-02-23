@@ -18,7 +18,7 @@ exports.up = function(db, callback) {
     db.createTable('services_model', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
         'id_service': { type: 'int'},
-        'id_mark': { type: 'int'},
+        'id_model': { type: 'int'},
     }, callback)
 };
 

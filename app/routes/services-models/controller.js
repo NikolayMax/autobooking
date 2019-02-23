@@ -10,7 +10,7 @@ class ServiceModelsController extends BaseController{
         let {serviceId, models} = req.body,
         data=models.map(model=>[serviceId, model]);
 
-        this.db.query(`INSERT INTO auto_${req.params.orgid}.services_model (id_service, id_mark) VALUES ?`, [data])
+        this.db.query(`INSERT INTO auto_${req.params.orgid}.services_model (id_service, id_model) VALUES ?`, [data])
             .then(results => {
                 res.json(results)
             })
