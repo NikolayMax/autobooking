@@ -23,6 +23,7 @@ exports.up = function(db, callback) {
         email: 'string',
         password: 'string',
         phone: 'string',
+        position_id: 'int',
     }, callback)
 };
 

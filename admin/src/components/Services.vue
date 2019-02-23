@@ -36,6 +36,7 @@
                                             mask="##:##"
                                             persistent-hint
                                             required
+                                            return-masked-value
                                     ></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>

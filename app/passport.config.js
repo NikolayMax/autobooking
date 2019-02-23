@@ -8,9 +8,9 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(user, done){
-    db.query('SELECT * from auto_admin.users WHERE id = ?', [user.id])
+    db.queryRow('SELECT * from auto_admin.users WHERE id = ?', [user.id])
         .then(function(user){
-            done(null, user[0]);
+            done(null, user);
         })
 });
 passport.use(new LocalStrategy({usernameField: 'phone'},function(phone, password, done){
@@ -22,15 +22,16 @@ passport.use(new LocalStrategy({usernameField: 'phone'},function(phone, password
         if(!password)
             return done('Пароль не ввиден');
 
-        db.query('SELECT * from auto_admin.users WHERE phone = ?', [phone])
-            .then(users => {
-                user = users[0];
+        db.queryRow('SELECT * from auto_admin.users WHERE phone = ?', [phone])
+            .then(row => {
+                user = row;
                 if(!user){
                     done('Пользователя не существуте', false);
                 }
                 return bcrypt.compare(password, user.password);
             })
             .then((res)=>{
+                console.log(res, user);
                 if(res) {
                     done(null, user);
                 } else {
