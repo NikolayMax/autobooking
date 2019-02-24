@@ -3,7 +3,12 @@ const db = require('../../db.js');
 let dbconfigmigration = require('./database.json');
 let dbconfig = require("../../db.config.json");
 
-dbconfigmigration.dev.password = dbconfig.password;
+let pass = {
+    development:'123',
+    production:'VzLuU3xNrbWJtku'
+};
+
+dbconfigmigration.dev.password = pass[process.env.NODE_ENV];
 dbconfigmigration.dev.user = dbconfig.user;
 dbconfigmigration.dev.host = dbconfig.host;
 

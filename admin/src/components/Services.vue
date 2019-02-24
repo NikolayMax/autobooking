@@ -68,7 +68,6 @@
                                     <v-treeview
                                             v-model="selectedCars"
                                             :items="cars"
-                                            return-object
                                             item-key="key"
                                             item-text="name"
                                             item-children="models"
@@ -113,6 +112,7 @@
                 services: [],
                 employees:[],
                 cars:[],
+                id:null,
                 method:'post',
                 selectedCars: [],
                 selectedEmployees:[],
@@ -127,6 +127,7 @@
             show(){
                 this.method = 'post';
                 this.dialog = true;
+                this.id = null;
             },
             close(){
                 this.dialog = false;
@@ -166,9 +167,9 @@
                 return this.$http.get(`${Vue.HOST}/cars/${Vue.ORGID}`)
             },
             changeService(service){
-                console.log(service)
 
                 this.dialog = true;
+                this.id = service.id;
                 this.name = service.name;
                 this.price = service.price;
                 this.duration = service.duration;
@@ -176,36 +177,28 @@
                 this.method = 'put';
                 let models = [];
                 this.cars.forEach(car =>{
-                    models = models.concat(car.models)
+                    car.models.forEach(model=>{
+                        let res = service.models.find(mdl=>mdl.id == model.id);
+                        if(res)
+                            models.push(res.id);
+                    })
                 });
-                this.selectedCars = service.models.map(model => models.find(mdl => mdl.id == model.id));
-                console.log(this.selectedCars)
+                this.selectedCars = models;
             },
             saveService(){
-                let {name, duration, price, selectedCars, selectedEmployees, id, method} = this,
+                let {name, duration, price, selectedCars, selectedEmployees, id, method, cars} = this,
                 serviceId=null;
-
-                let modelsIds = {};
-                selectedCars.forEach(car=>{
-                    if(car.models && car.models.length)
-                        car.models.forEach(model=>{
-                            modelsIds[model.id] = true;
-                        });
-                    else
-                        modelsIds[car.id] = true;
-                });
-                selectedCars = Object.keys(modelsIds);
 
                 selectedEmployees = selectedEmployees.map(employee=>employee.id);
 
-                this.$http[this.method](`${Vue.HOST}/services/${Vue.ORGID}`, {name, duration, price, id})
+                this.$http[method](`${Vue.HOST}/services/${Vue.ORGID}`, {name, duration, price, id})
                     .then((response)=>{
                         this.dialog=false;
-                        serviceId = response.data.insertId;
+                        serviceId =  id || response.data.insertId;
 
-                        return this.$http[this.method](`${Vue.HOST}/services-models/${Vue.ORGID}`, {serviceId:serviceId, models:selectedCars})
+                        return this.$http[method](`${Vue.HOST}/services-models/${Vue.ORGID}`, {serviceId:serviceId, models:selectedCars})
                     })
-                    .then(response=>this.$http[this.method](`${Vue.HOST}/services_employees/${Vue.ORGID}`, {serviceId:serviceId, employees:selectedEmployees}))
+                    .then(response=>this.$http[method](`${Vue.HOST}/services-employees/${Vue.ORGID}`, {serviceId:serviceId, employees:selectedEmployees}))
                     .then(response=>this.getServices())
                     .then(response=>{
                         this.services = response.data;

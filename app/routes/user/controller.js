@@ -5,6 +5,10 @@ const BCRYPT_SALT_ROUNDS = 10;
 const {exec} = require('child_process');
 const BaseController = require('../BaseController');
 
+let type = {
+    'development':'dev',
+    'production':'prod'
+};
 class UserController extends BaseController{
     constructor(db){
         super();
@@ -51,8 +55,8 @@ class UserController extends BaseController{
                 console.log(123123123)
                 return this.db.query(`CREATE DATABASE IF NOT EXISTS auto_${user['organization_id']} CHARACTER SET utf8 COLLATE utf8_general_ci`)
             })
-            .then(results=>{
-                exec(`cd ${path.resolve(__dirname+'/../../migration')} && node app.js`, (e, stdout, stderr)=> {
+            .then(()=>{
+                let r = exec(`cd ${path.resolve(__dirname+'/../../migration')} && node app.js`, (e, stdout, stderr)=> {
                     if (e instanceof Error) {
                         console.error(e);
                         next(e)
@@ -60,6 +64,14 @@ class UserController extends BaseController{
                     console.log(stdout);
                     res.json(user);
                 });
+                r.stdout.on('data', function (data) {
+                    console.log('stdout: ' + data.toString());
+                });
+                r.stderr.on('data', function (data) {
+                    console.log('stderr: ' + data.toString());
+                });
+
+
             })
             .catch((err)=>{
                 return next(err)

@@ -8,6 +8,7 @@ module.exports = (()=>{
     let controller = new ServiceEmployeesController(db);
 
     router.post('/:orgid', controller.isOrgid.bind(controller), controller.save.bind(controller));
+    router.put('/:orgid', controller.isOrgid.bind(controller), controller.change.bind(controller));
 
 
     return router;

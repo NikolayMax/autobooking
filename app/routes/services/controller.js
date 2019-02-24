@@ -11,6 +11,7 @@ class ServiceController extends BaseController{
         this.db.query(`SELECT * FROM auto_${req.params.orgid}.services`)
            .then(services=>{
                this.services = services;
+
                return this.db.query(`SELECT e.*, se.id_service FROM auto_${req.params.orgid}.services_employees AS se LEFT JOIN auto_${req.params.orgid}.employees AS e ON se.id_employee = e.id`)
            })
            .then(employees=>{
@@ -49,6 +50,17 @@ class ServiceController extends BaseController{
             .then(() => this.db.query(`DELETE FROM auto_${orgid}.services_model WHERE id_service = ?`, [id]))
             .then(rows=>{
                 res.json(rows);
+            })
+            .catch(err => {
+                next(err)
+            });
+    }
+    changeService(req, res, next){
+        let {name, price, duration, id} = req.body;
+
+        this.db.query(`UPDATE auto_${req.params.orgid}.services SET name = ?, price = ?, duration = ? WHERE id = ?`, [name, price, duration, id])
+            .then(results => {
+                res.json(results)
             })
             .catch(err => {
                 next(err)
