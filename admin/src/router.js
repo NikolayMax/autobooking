@@ -10,6 +10,7 @@ import Positions from './components/Positions.vue';
 import Cars from './components/Cars.vue';
 import Visits from './components/Visits.vue';
 import Booking from './components/Booking.vue';
+import Schedule from './components/Schedule.vue';
 
 import store from './store';
 
@@ -35,6 +36,7 @@ const routes = [
     {path:'/cars', component:Cars, meta:{title:'Автомобили'}, beforeEnter: isAuth},
     {path:'/visits', component:Visits, meta:{title:'Визиты'}, beforeEnter: isAuth},
     {path:'/booking', component:Booking, meta:{title:'Онлайн Запись 2.0'}, beforeEnter: isAuth},
+    {path:'/schedule', component:Schedule, meta:{title:'Расписание'}, beforeEnter: isAuth},
 ];
 
 export default new VueRouter({

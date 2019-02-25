@@ -52,7 +52,7 @@
         data:()=>({
             drawer: true,
             items: [
-                { title: 'Визиты', icon: 'event', route:'/visits'},
+                { title: 'Расписание', icon: 'event', route:'/schedule'},
                 { title: 'Сотрудники', icon: 'people', route:'/employees' },
                 { title: 'Услуги', icon: 'apps', route:'/services'},
                 { title: 'Должность', icon: 'star', route:'/positions'},
