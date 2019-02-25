@@ -57,6 +57,7 @@ export default {
             state.model = {};
             state.services = [];
             state.time = {};
+            state.date = new Date().toISOString().substr(0, 10);
         },
     }
 }

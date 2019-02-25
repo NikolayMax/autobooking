@@ -68,7 +68,8 @@
     import TwoStep from './TwoStep';
     import ThreeStep from './ThreeStep';
     import FourStep from './FourStep';
-    import {SELECTED_CLEAR} from '../store/actions/selected';
+    import {SELECTED_CLEAR} from '@/store/actions/selected';
+    import { TIMES_RESET, TIMES_UPDATE } from "@/store/actions/times";
     import Vue from 'vue';
 
     export default {
@@ -94,6 +95,8 @@
                     .then(response=>{
                         this.e1=4;
                         this.$store.dispatch(SELECTED_CLEAR);
+                        this.$store.dispatch(TIMES_RESET);
+                        this.$store.dispatch(TIMES_UPDATE, this.$store.state.selected.date);
                     })
                     .catch(err=>{
                         this.$store.dispatch(SELECTED_CLEAR);
