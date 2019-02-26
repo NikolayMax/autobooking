@@ -39,7 +39,7 @@
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field
-                                            label="Продолжительность чч:мм"
+                                            :label="labelDuration"
                                             v-model="duration"
                                             mask="##:##"
                                             persistent-hint
@@ -92,6 +92,7 @@
 
 <script>
     import Vue from 'vue';
+    import timeCalculated from '@/services/vue.time-calculated';
 
     export default {
         name: "Services",
@@ -123,6 +124,7 @@
             }
         },
         methods:{
+
             getNameEmployee:item => `${item.lastname} ${item.firstname} ${item.patronymic}`,
             show(){
                 this.method = 'post';
@@ -209,6 +211,13 @@
         computed: {
             allEmployees () {
                 return this.selectedEmployees.length === this.employees.length
+            },
+            labelDuration(){
+                if(this.duration){
+                    return `Продолжительность вашей услуги ${timeCalculated.minutesFormatted(this.duration)}`;
+                }else{
+                    return `Продолжительность чч:мм`;
+                }
             },
         },
 

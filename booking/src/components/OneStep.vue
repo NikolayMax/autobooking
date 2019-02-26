@@ -44,6 +44,31 @@
                 </v-flex>
             </template>
         </v-select>
+        <div class="title">Мастера</div>
+        <v-item-group>
+            <v-container grid-list-md>
+                <v-layout wrap>
+                    <v-flex
+                            v-for="n in 15"
+                            :key="n"
+                            md2>
+                        <v-item>
+                            <v-card
+                                    slot-scope="{ active, toggle }"
+                                    class="d-flex align-center"
+                                    dark
+                                    height="70">
+                                <v-scroll-y-transition>
+                                    <div class="text-xs-center">
+                                        Active
+                                    </div>
+                                </v-scroll-y-transition>
+                            </v-card>
+                        </v-item>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-item-group>
         <div class="title pb-4 pt-5" >Выбранные услуги</div>
         <v-data-table
                 :headers="headers"
