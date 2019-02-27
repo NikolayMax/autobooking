@@ -44,31 +44,21 @@
                 </v-flex>
             </template>
         </v-select>
-        <div class="title">Мастера</div>
-        <v-item-group>
-            <v-container grid-list-md>
-                <v-layout wrap>
-                    <v-flex
-                            v-for="n in 15"
-                            :key="n"
-                            md2>
-                        <v-item>
-                            <v-card
-                                    slot-scope="{ active, toggle }"
-                                    class="d-flex align-center"
-                                    dark
-                                    height="70">
-                                <v-scroll-y-transition>
-                                    <div class="text-xs-center">
-                                        Active
-                                    </div>
-                                </v-scroll-y-transition>
-                            </v-card>
-                        </v-item>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-        </v-item-group>
+        <div class="title mb-2">Выберите мастера</div>
+
+        <v-layout row wrap>
+            <v-flex v-for="(employee, index) in employees" :key="index" xs2 @click="selectEmployee(employee)" style="position: relative;">
+                <v-card>
+                    <v-btn fab small color="primary" class="employee-icon-selected" v-show="employee.selected">
+                        <v-icon light>done</v-icon>
+                    </v-btn>
+
+                    <v-img :src="`https://picsum.photos/500/300?image=${index * 5 + 10}`"></v-img>
+                    <div class="px-1">{{employee.firstname}} {{employee.lastname}}</div>
+                </v-card>
+            </v-flex>
+        </v-layout>
+
         <div class="title pb-4 pt-5" >Выбранные услуги</div>
         <v-data-table
                 :headers="headers"
@@ -93,7 +83,7 @@
     </div>
 </template>
 <script>
-    import {SET_SERVICE, SET_CAR, SET_MODEL} from '../store/actions/selected';
+    import {SET_SERVICE, SET_CAR, SET_MODEL, SET_EMPLOYEE} from '../store/actions/selected';
     import Vue from 'vue';
 
     export default{
@@ -107,6 +97,17 @@
                     .then(response=>{
                         this.services = response.data;
                     })
+            },
+            selectEmployee(employee){
+
+                if(this.oldSelectedEmployee)
+                    this.oldSelectedEmployee.selected=false;
+
+                employee.selected = true;
+
+                this.$store.dispatch(SET_EMPLOYEE, employee);
+
+                this.oldSelectedEmployee = employee;
             }
         },
         computed: {
@@ -139,6 +140,11 @@
             this.getCars()
                 .then(response=>{
                     this.cars = response.data;
+                    return this.$store.dispatch('getEmployees')
+                })
+                .then(employees=>{
+                    console.log(employees)
+                    this.employees = employees;
                 })
                 .catch(error=>console.log(error));
         },
@@ -146,6 +152,8 @@
             cars:[],
             services: [],
             mark:[],
+            employees:[],
+            oldSelectedEmployee:{},
             headers: [
                 {
                     text: 'Название',
@@ -156,3 +164,13 @@
         })
     }
 </script>
+<style scoped>
+    .employee-icon-selected{
+        width:25px;
+        height:25px;
+        position: absolute;
+        top:0;
+        z-index: 2;
+        padding: 0;
+    }
+</style>

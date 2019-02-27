@@ -92,13 +92,13 @@
                     date,
                     time:time.title
                 })
-                    .then(response=>{
+                    .then(()=>{
                         this.e1=4;
                         this.$store.dispatch(SELECTED_CLEAR);
                         this.$store.dispatch(TIMES_RESET);
                         this.$store.dispatch(TIMES_UPDATE, this.$store.state.selected.date);
                     })
-                    .catch(err=>{
+                    .catch(()=>{
                         this.$store.dispatch(SELECTED_CLEAR);
                     })
             }

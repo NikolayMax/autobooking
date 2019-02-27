@@ -1,4 +1,4 @@
-import { SET_SERVICE, SET_CAR, SET_MODEL, SET_DATE, SET_TIME, SELECTED_CLEAR } from '../actions/selected';
+import { SET_SERVICE, SET_CAR, SET_MODEL, SET_DATE, SET_TIME, SELECTED_CLEAR, SET_EMPLOYEE } from '../actions/selected';
 
 export default {
     state:{
@@ -7,10 +7,9 @@ export default {
         services:[],
         date:new Date().toISOString().substr(0, 10),
         time:{},
+        employee:{},
     },
-    getters:{
-
-    },
+    getters:{},
     actions:{
         [SET_SERVICE]: ({commit}, services) => {
            commit(SET_SERVICE, services);
@@ -32,7 +31,11 @@ export default {
             commit(SET_TIME, time);
             return state.time
         },
-        [SELECTED_CLEAR]: ({commit, state}, time) => {
+        [SET_EMPLOYEE]: ({commit, state}, employee) => {
+            commit(SET_EMPLOYEE, employee);
+            return state.employee
+        },
+        [SELECTED_CLEAR]: ({commit}) => {
             commit(SELECTED_CLEAR);
         }
     },
@@ -51,6 +54,9 @@ export default {
         },
         [SET_TIME]: (state, time) => {
             state.time = time;
+        },
+        [SET_EMPLOYEE]: (state, employee) => {
+            state.employee = employee;
         },
         [SELECTED_CLEAR]: (state) => {
             state.car = {};
