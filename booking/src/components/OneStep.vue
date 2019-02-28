@@ -44,17 +44,17 @@
                 </v-flex>
             </template>
         </v-select>
-        <div class="title mb-2">Выберите мастера</div>
+        <div class="title mb-2" v-show="employees.length">Выберите мастера</div>
 
-        <v-layout row wrap>
-            <v-flex v-for="(employee, index) in employees" :key="index" xs2 @click="selectEmployee(employee)" style="position: relative;">
+        <v-layout row wrap v-show="employees.length">
+            <v-flex v-for="(employee, index) in employees" :key="index" xs2 @click="selectEmployee(employee)" class="relative mh1">
                 <v-card>
                     <v-btn fab small color="primary" class="employee-icon-selected" v-show="employee.selected">
                         <v-icon light>done</v-icon>
                     </v-btn>
 
                     <v-img :src="`https://picsum.photos/500/300?image=${index * 5 + 10}`"></v-img>
-                    <div class="px-1">{{employee.firstname}} {{employee.lastname}}</div>
+                    <div class="px-1 truncate-ns">{{employee.firstname}} {{employee.lastname}}</div>
                 </v-card>
             </v-flex>
         </v-layout>
@@ -108,6 +108,7 @@
                 this.$store.dispatch(SET_EMPLOYEE, employee);
 
                 this.oldSelectedEmployee = employee;
+                console.log(employee)
             }
         },
         computed: {
@@ -143,8 +144,10 @@
                     return this.$store.dispatch('getEmployees')
                 })
                 .then(employees=>{
-                    console.log(employees)
-                    this.employees = employees;
+                    this.employees = employees.map(employee=>{
+                        employee.selected=false;
+                        return employee
+                    });
                 })
                 .catch(error=>console.log(error));
         },
