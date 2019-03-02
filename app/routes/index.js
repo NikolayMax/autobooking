@@ -8,6 +8,7 @@ router.use('/positions', require('./positions'));
 router.use('/cars', require('./cars'));
 router.use('/services-models', require('./services-models'));
 router.use('/services-employees', require('./services-employees'));
+router.use('/services-cars', require('./services-cars'));
 router.use('/visit', require('./visit'));
 router.use('/booking', require('./booking'));
 

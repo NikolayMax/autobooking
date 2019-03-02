@@ -6,9 +6,14 @@ export default {
 
     },
     actions:{
-        getServices: ({commit}, {car, model}) => {
-            return Vue.http.get(`${Vue.HOST}/services/${Vue.ORGID}`, {params:{car, model}})
-                .then(response=>Promise.resolve(response.data))
+        getServices: ({commit}) => {
+            return Vue.http.get(`${Vue.HOST}/services/${Vue.ORGID}`)
+                .then(response => Promise.resolve(response.data.filter(service=>{
+                    service.employees.forEach(employee=>{
+                        employee.selected=false;
+                    });
+                    return service.employees.length && service.cars.length
+                })))
         }
     },
     mutations:{

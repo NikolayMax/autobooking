@@ -198,10 +198,11 @@
                         this.dialog=false;
                         serviceId =  id || response.data.insertId;
 
-                        return this.$http[method](`${Vue.HOST}/services-models/${Vue.ORGID}`, {serviceId:serviceId, models:selectedCars})
+                        return selectedCars.length ? this.$http[method](`${Vue.HOST}/services-models/${Vue.ORGID}`, {serviceId, models:selectedCars}) : Promise.resolve()
                     })
-                    .then(response=>this.$http[method](`${Vue.HOST}/services-employees/${Vue.ORGID}`, {serviceId:serviceId, employees:selectedEmployees}))
-                    .then(response=>this.getServices())
+                    .then(() => selectedCars.length ? this.$http[method](`${Vue.HOST}/services-cars/${Vue.ORGID}`, {serviceId, cars:selectedCars}) : Promise.resolve())
+                    .then(() => selectedEmployees.length ? this.$http[method](`${Vue.HOST}/services-employees/${Vue.ORGID}`, {serviceId, employees:selectedEmployees}) : Promise.resolve())
+                    .then(() => this.getServices())
                     .then(response=>{
                         this.services = response.data;
                     })

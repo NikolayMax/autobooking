@@ -5,47 +5,49 @@ class ServiceController extends BaseController{
         super();
         this.db = db;
     }
-    getServicesFilter(){
+    joinEmployees(req, res, next){
+        return services => {
+            let {orgid} = req.params;
 
-    }
-    joinEmployees(services){
-        let {orgid} = req.params;
+            return this.db.query(`SELECT e.*, se.id_service FROM auto_${orgid}.services_employees AS se LEFT JOIN auto_${orgid}.employees AS e ON se.id_employee = e.id`)
+                .then(rows=> Promise.resolve(services.map(service=>{
 
-        return this.db.query(`SELECT e.*, se.id_service FROM auto_${orgid}.services_employees AS se LEFT JOIN auto_${orgid}.employees AS e ON se.id_employee = e.id`)
-            .then(rows=> Promise.resolve(services.map(service=>{
-
-                service.employees = rows.filter(x => x.id_service === service.id);
-
-                return service;
-            })))
-    }
-    getServices(req, res, next){
-        let {orgid, car, model} = req.params;
-
-        this.db.query(`SELECT * FROM auto_${orgid}.services`)
-           .then(services=>{
-               this.services = services;
-
-               return this.joinEmployees(services)
-           })
-           .then(employees=>{
-               this.employees = employees;
-
-               return this.db.query(`SELECT m.*, sm.id_service FROM auto_${orgid}.services_model AS sm LEFT JOIN auto_${orgid}.models AS m ON sm.id_model = m.id`);
-           })
-            .then(models=>{
-                this.models = models;
-
-                this.services = this.services.map(service=>{
-
-                    let models = this.models.filter(x => x.id_service === service.id);
-
-                    service.models = models || [];
+                    service.employees = rows.filter(x => x.id_service === service.id);
 
                     return service;
-                });
-                res.json(this.services);
+                })))
+        }
+    }
+    joinCars(req, res, next){
+        let {orgid} = req.params,
+            cars = [];
+        return services => this.db.query(`SELECT c.*, sc.id_service FROM auto_${orgid}.services_cars AS sc LEFT JOIN auto_${orgid}.cars AS c ON sc.id_car = c.id`)
+            .then(rows => {
+                cars = rows;
+                return this.db.query(`SELECT m.*, sm.id_service FROM auto_${orgid}.services_model AS sm LEFT JOIN auto_${orgid}.models AS m ON sm.id_model = m.id`)
             })
+            .then(rows => {
+                cars.forEach(car =>{
+                    car.models = rows.filter(model => model.id_car === car.id && car.id_service === model.id_service);
+                });
+                services.forEach(service => {
+                    service.cars = cars.filter(car => car.id_service === service.id)
+                });
+                return Promise.resolve(cars);
+            })
+    }
+    getServices(req, res, next){
+        let {orgid} = req.params;
+        let services = [];
+
+        this.db.query(`SELECT * FROM auto_${orgid}.services`)
+           .then(rows=>{
+               services = rows;
+
+               return this.joinEmployees(req, res, next)(services)
+           })
+            .then(rows => this.joinCars(req, res, next)(services))
+            .then(rows => res.json(services))
             .catch(err => next(err));
     }
     deleteService(req, res, next){
@@ -54,12 +56,9 @@ class ServiceController extends BaseController{
         this.db.query(`DELETE FROM auto_${orgid}.services WHERE id = ?`, [id])
             .then(() => this.db.query(`DELETE FROM auto_${orgid}.services_employees WHERE id_service = ?`, [id]))
             .then(() => this.db.query(`DELETE FROM auto_${orgid}.services_model WHERE id_service = ?`, [id]))
-            .then(rows=>{
-                res.json(rows);
-            })
-            .catch(err => {
-                next(err)
-            });
+            .then(() => this.db.query(`DELETE FROM auto_${orgid}.services_cars WHERE id_service = ?`, [id]))
+            .then(() => res.json())
+            .catch(err => next(err));
     }
     changeService(req, res, next){
         let {name, price, duration, id} = req.body;
@@ -74,7 +73,7 @@ class ServiceController extends BaseController{
     }
     addService(req, res, next){
         let {name, price, duration} = req.body;
-
+        price = price || 0;
         this.db.query(`INSERT INTO auto_${req.params.orgid}.services (name, price, duration) VALUES(?, ?, ?)`, [name, price, duration])
             .then(results => {
                 res.json(results)
