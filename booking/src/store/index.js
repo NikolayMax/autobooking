@@ -5,6 +5,7 @@ import selected from './modules/selected';
 import user from './modules/user';
 import times from './modules/times';
 import employees from './modules/employees';
+import services from './modules/services';
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
         selected,
         times,
         user,
-        employees
+        employees,
+        services
     },
 })

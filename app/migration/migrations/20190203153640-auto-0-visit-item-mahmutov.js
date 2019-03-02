@@ -23,6 +23,7 @@ exports.up = function(db, callback) {
         'name_car':'string',
         'name_model':'string',
         'visit_id':'int',
+        'employee_id':'int',
     }, callback)
 };
 

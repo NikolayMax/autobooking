@@ -6,7 +6,10 @@ export default {
 
     },
     actions:{
-        getEmployees: () => Vue.http.get(`${Vue.HOST}/employees/${Vue.ORGID}`).then(response=>Promise.resolve(response.data))
+        getEmployees: () => Vue.http.get(`${Vue.HOST}/employees/${Vue.ORGID}`).then(response=>{
+            response.data.push({id:0, firstname:'Любой мастер'});
+            return Promise.resolve(response.data)
+        })
     },
     mutations:{
 

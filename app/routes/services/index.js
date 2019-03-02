@@ -7,7 +7,7 @@ module.exports = ()=>{
 
     let controller = new ServiceController(db);
 
-    router.get('/:orgid', controller.isOrgid.bind(controller), controller.getServicesForOrgId.bind(controller));
+    router.get('/:orgid', controller.isOrgid.bind(controller), controller.getServices.bind(controller));
     router.post('/:orgid', controller.isOrgid.bind(controller), controller.addService.bind(controller));
     router.put('/:orgid', controller.isOrgid.bind(controller), controller.changeService.bind(controller));
     router.delete('/:orgid/:id', controller.isOrgid.bind(controller), controller.deleteService.bind(controller));

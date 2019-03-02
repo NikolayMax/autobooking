@@ -42,15 +42,28 @@ class EmployeesController extends BaseController{
             });
     }
     getEmployees(req, res, next){
-        let sql = `SELECT * FROM auto_${req.params.orgid}.employees`,
+        let {orgid} = req.params;
+        let {serviceIds} = req.query;
+
+        let sql = `SELECT * FROM auto_${orgid}.employees`,
             params;
-        if(req.query && req.query.serviceIds){
-            sql = `SELECT e.* FROM auto_${req.params.orgid}.employees AS e, auto_${req.params.orgid}.services_employees AS se WHERE e.id = se.id_employee AND se.id_service in (?)`;
-            params = [req.query.serviceIds];
+        if(serviceIds){
+            sql = `SELECT e.* FROM auto_${orgid}.employees AS e, auto_${orgid}.services_employees AS se WHERE e.id = se.id_employee AND se.id_service in (?)`;
+            params = [serviceIds];
         }
 
+        this.employees = [];
         this.db.query(sql, params)
-            .then(results => res.json(results))
+            .then(results => {
+                this.employees = results;
+                return this.db.query(`SELECT s.*, se.id_employee FROM auto_${orgid}.services AS s LEFT JOIN auto_${orgid}.services_employees AS se ON s.id = se.id_service WHERE id_employee IN (?)`, [results.map(emp=>emp.id)])
+            })
+            .then(services=>{
+                this.employees.forEach(employee=>{
+                    employee.services = services.filter(service => service.id_employee === employee.id)
+                });
+                res.json(this.employees)
+            })
             .catch(err => next(err));
     }
 

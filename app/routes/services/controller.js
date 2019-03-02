@@ -5,27 +5,33 @@ class ServiceController extends BaseController{
         super();
         this.db = db;
     }
-    getServicesForOrgId(req, res, next){
+    getServicesFilter(){
 
+    }
+    joinEmployees(services){
+        let {orgid} = req.params;
 
-        this.db.query(`SELECT * FROM auto_${req.params.orgid}.services`)
+        return this.db.query(`SELECT e.*, se.id_service FROM auto_${orgid}.services_employees AS se LEFT JOIN auto_${orgid}.employees AS e ON se.id_employee = e.id`)
+            .then(rows=> Promise.resolve(services.map(service=>{
+
+                service.employees = rows.filter(x => x.id_service === service.id);
+
+                return service;
+            })))
+    }
+    getServices(req, res, next){
+        let {orgid, car, model} = req.params;
+
+        this.db.query(`SELECT * FROM auto_${orgid}.services`)
            .then(services=>{
                this.services = services;
 
-               return this.db.query(`SELECT e.*, se.id_service FROM auto_${req.params.orgid}.services_employees AS se LEFT JOIN auto_${req.params.orgid}.employees AS e ON se.id_employee = e.id`)
+               return this.joinEmployees(services)
            })
            .then(employees=>{
                this.employees = employees;
 
-               this.services = this.services.map(service=>{
-
-                   let employees = this.employees.filter(x => x.id_service === service.id);
-
-                   service.employees = employees || [];
-
-                   return service;
-               });
-               return this.db.query(`SELECT m.*, sm.id_service FROM auto_${req.params.orgid}.services_model AS sm LEFT JOIN auto_${req.params.orgid}.models AS m ON sm.id_model = m.id`);
+               return this.db.query(`SELECT m.*, sm.id_service FROM auto_${orgid}.services_model AS sm LEFT JOIN auto_${orgid}.models AS m ON sm.id_model = m.id`);
            })
             .then(models=>{
                 this.models = models;
