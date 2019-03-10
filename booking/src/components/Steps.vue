@@ -82,11 +82,12 @@
         methods:{
             signUp(){
                 let {user} = this.$store.state;
-                let {services, car, model, date, time} = this.$store.state.selected;
+                let {services, car, model, date, time, employee} = this.$store.state.selected;
 
-                this.$http.post(`${Vue.HOST}/visit/1`, {
+                this.$http.post(`${Vue.HOST}/visit/${Vue.ORGID}`, {
                     user,
                     services,
+                    employee,
                     car,
                     model,
                     date,

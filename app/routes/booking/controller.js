@@ -7,7 +7,8 @@ class BookingController extends BaseController{
 
     }
     timeIntervals(req, res, next) {
-        this.db.query(`SELECT startTime, endTime, DATE_FORMAT(date, '%Y-%m-%d') AS date FROM auto_${req.params.orgid}.visits WHERE date = DATE_FORMAT(?, '%Y-%m-%d')`, [req.params.date])
+        let {orgid, date} = req.params;
+        this.db.query(`SELECT startTime, endTime, DATE_FORMAT(date, '%Y-%m-%d') AS date FROM auto_${orgid}.visits WHERE date = DATE_FORMAT(?, '%Y-%m-%d')`, [date])
             .then(visits=>{
                 res.json(visits);
             })

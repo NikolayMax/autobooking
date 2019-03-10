@@ -12,44 +12,72 @@ export default {
             commit(TIMES_RESET);
             return state
         },
-        [TIMES_UPDATE]: ({commit, state}, date) => {
+        [TIMES_UPDATE]: ({commit, state}, {date, employee}) => {
 
             let durationServices=0;
             store.state.selected.services.forEach(service=>{
                 service.minutesDuration = timeCalculated.stringToMinutes(service.duration);
                 durationServices+=service.minutesDuration;
             });
-
-            Vue.http.get(`${Vue.HOST}/booking/timeIntervals/${Vue.ORGID}/${date}`)
+            Vue.http.get(`${Vue.HOST}/visit/${Vue.ORGID}`, {params:{date, employee}})
                 .then(response=>{
-                    let timeIntervals = response.data.map(item=>{
-                        return {...item, minuteStartTime:timeCalculated.stringToMinutes(item.startTime), minuteEndTime:timeCalculated.stringToMinutes(item.endTime)}
+                    let visits = response.data.filter(visit=>visit.visitItems.length);
+                    let visitItems = [];
+                    visits.forEach(visit=>{
+                        visitItems = visitItems.concat(visit.visitItems);
                     });
+                    function f(s){
+                        let arr = s.split(':');
 
-                    state.forEach(time=>{
-                        timeIntervals.forEach(interval=>{
-                            if(time.minutes >= interval.minuteStartTime && time.minutes <= interval.minuteEndTime && date === interval.date){
+
+                        if(arr[1] < 15){
+                            arr[1] = "00";
+                        }else if(arr[1] >= 15 && arr[1] <= 30){
+                            arr[1] = "30";
+                        }else if(arr[1] < 45){
+                            arr[1] = "30";
+                        }else if(arr[1] >= 45){
+                            arr[0] = arr[0] * 1 + 1 < 10 ? "0" + (arr[0] * 1 + 1) : (arr[0] * 1 + 1) + "";
+                            arr[1] = "00";
+                        }
+                        return arr.join(":");
+                    }
+                    visitItems.forEach(vItem=>{
+                        vItem.mStartTime = timeCalculated.stringToMinutes(f(vItem.startTime));
+                        vItem.mEndTime = timeCalculated.stringToMinutes(f(vItem.endTime));
+                        vItem.mDuration = timeCalculated.stringToMinutes(vItem.duration);
+
+                        state.forEach(time=>{
+                            if(time.minutes >= vItem.mStartTime && time.minutes < vItem.mEndTime){
                                 time.disabled=true;
                             }
-                        })
+                        });
                     });
-                    let times = [];
-                    times.duration=0;
+
+                    let r = store.state.selected.services.reduce((ac, v)=>{
+                        return ac + v.minutesDuration;
+                    },0);
+                    if(r < 30 && r !== 0)
+                        r = 30;
+                    console.log(store.state.selected.services, r);
+                    let arrActiveTimes = [];
+                    arrActiveTimes.count = 0;
                     state.forEach(time=>{
                         if(!time.disabled){
-                            times.push(time);
-                            times.duration+=30
-                        }else{
-                            if(times.duration <= durationServices){
-                                times.forEach(item=>{
-                                    item.disabled=true;
-                                });
-                                times.length=0;
-                                times.duration=0;
+                            arrActiveTimes.push(time);
+                            arrActiveTimes.count += 30;
+                        }else if(arrActiveTimes.length){
+                            if(r > arrActiveTimes.count){
+                                arrActiveTimes.forEach(el=>{
+                                    el.disabled=true;
+                                })
                             }
+                            arrActiveTimes.length=0;
+                            arrActiveTimes.count=0;
                         }
                     });
-                })
+
+                });
 
             return state
         },

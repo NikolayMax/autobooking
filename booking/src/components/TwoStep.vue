@@ -44,6 +44,7 @@
 <script>
     import {SET_DATE,SET_TIME} from '../store/actions/selected';
     import {TIMES_RESET, TIMES_UPDATE} from "@/store/actions/times";
+    import TimeCalculated from '@/services/vue.time-calculated';
 
     export default {
         name: "TwoStep",
@@ -62,11 +63,11 @@
         watch:{
             picker:function(value, old){
                 this.$store.dispatch(TIMES_RESET);
-                this.$store.dispatch(TIMES_UPDATE, value);
+                this.$store.dispatch(TIMES_UPDATE, {date:value,employee: this.$store.state.selected.employee.id});
             }
         },
         mounted:function(){
-            this.$store.dispatch(TIMES_UPDATE, this.date);
+            this.$store.dispatch(TIMES_UPDATE, {date:this.date,employee: this.$store.state.selected.employee.id});
         },
         computed: {
             times: {
@@ -90,7 +91,12 @@
                     return this.$store.state.selected.time
                 },
                 set(newValue) {
-                    return this.$store.dispatch(SET_TIME, newValue)
+                    this.$store.state.selected.services.forEach(service =>{
+                        service.startTime = newValue.title;
+                        service.endTime = TimeCalculated.stringToMinutes(newValue.title) + TimeCalculated.stringToMinutes(service.duration);
+                        service.endTime = TimeCalculated.minutesToString(service.endTime);
+                    });
+                    return this.$store.dispatch(SET_TIME, newValue);
                 }
             },
         }

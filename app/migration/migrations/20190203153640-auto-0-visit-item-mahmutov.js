@@ -17,9 +17,11 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db, callback) {
     db.createTable('visit_item', {
         id: { type: 'int', primaryKey: true, autoIncrement: true },
-        'service_name': 'string',
-        'service_duration':'string',
-        'service_pay_sum':'real',
+        'name': 'string',
+        'duration':'string',
+        'startTime':'string',
+        'endTime':'string',
+        'pay_sum':'real',
         'name_car':'string',
         'name_model':'string',
         'visit_id':'int',
